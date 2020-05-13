@@ -51,12 +51,15 @@
 
         public EmployeeViewModel(Employee employee, Employer employer)
         {
-            var benefit = employer.Benefits.First();
-            var benefitCostPerYear = benefit.CalculateCost(employee);
-            var benefitsCostPerPay = benefitCostPerYear / employer.PayPeriodsPerYear;
+            var benefitsCostPerYear = 0m;
+            foreach (var benefit in employer.Benefits)
+            {
+                benefitsCostPerYear += benefit.AnnualCost(employee);
+            }
+            var benefitsCostPerPay = benefitsCostPerYear / employer.PayPeriodsPerYear;
             var netPaycheck = (employee.AnnualSalary / employer.PayPeriodsPerYear) - benefitsCostPerPay;
 
-            
+
             Name = employee.Name;
             AnnualSalary = employee.AnnualSalary.ToString("C");
             BenefitsCostPerPay = benefitsCostPerPay.ToString("C");

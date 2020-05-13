@@ -11,11 +11,11 @@ namespace Payroll.Data.Models
         [Range(1, 365, ErrorMessage = "Number of pay periods must be between 1 and 365 inclusive")]
         public int PayPeriodsPerYear { get; set; }
 
-        public IReadOnlyCollection<Benefit> Benefits { get; set; }
+        public IReadOnlyCollection<IBenefit> Benefits { get; set; }
 
         public Employer(IReadOnlyCollection<Employee> employees,
                         int payPeriodsPerYear,
-                        IReadOnlyCollection<Benefit> benefits)
+                        IReadOnlyCollection<IBenefit> benefits)
         {
             Employees = employees;
             PayPeriodsPerYear = payPeriodsPerYear;

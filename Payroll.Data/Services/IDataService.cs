@@ -36,6 +36,6 @@ namespace Payroll.Data.Services
         /// Returns all benefits provided by the employer.
         /// </summary>
         /// <returns>All benefits provided by the employer.</returns>
-        IReadOnlyCollection<Benefit> GetBenefits();
+        IReadOnlyCollection<IBenefit> GetBenefits();
     }
 }

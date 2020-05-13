@@ -14,44 +14,7 @@ namespace Payroll.Data.Demo
         protected virtual List<Employee> _initialEmployeeData => new List<Employee>();
         protected readonly Dictionary<Guid, Employee> _employees;
 
-        private static class Costs
-        {
-            public const decimal Employee = 1000m;
-            public const decimal Spouse = 500m;
-            public const decimal Dependent = 500m;
-        }
-
-        private readonly Benefit _benefit = new Benefit()
-        {
-            Name = "Benefits",
-            CalculateCost = employee =>
-            {
-                Func<Person, decimal, decimal> costForPerson = (person, cost) =>
-                {
-                    if (string.IsNullOrWhiteSpace(person.Name)) return cost;
-
-                    if (person.Name.ToUpper()[0] == 'A')
-                    {
-                        return cost * 0.9m;
-                    }
-                    return cost;
-                };
-
-                var totalCost = costForPerson(employee, Costs.Employee);
-
-                if (employee.Spouse != null)
-                {
-                    totalCost += costForPerson(employee.Spouse, Costs.Spouse);
-                }
-
-                foreach (var dependent in employee.Dependents)
-                {
-                    totalCost += costForPerson(dependent, Costs.Dependent);
-                }
-
-                return totalCost;
-            },
-        };
+        private readonly IBenefit _benefit = new DemoBenefit();
 
         public DemoDataService()
         {
@@ -96,9 +59,9 @@ namespace Payroll.Data.Demo
             _employees[employee.Id.Value] = employee;
         }
 
-        public IReadOnlyCollection<Benefit> GetBenefits()
+        public IReadOnlyCollection<IBenefit> GetBenefits()
         {
-            return new List<Benefit> { _benefit };
+            return new List<IBenefit> { _benefit };
         }
 
         public Employer GetEmployer() => new Employer(GetEmployees(),

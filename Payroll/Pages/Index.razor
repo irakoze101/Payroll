@@ -1,6 +1,66 @@
 ﻿@page "/"
+@inject Payroll.Data.Services.IDataService DataService 
+@using Payroll.Data.Models
 
-<h1>Hello, world!</h1>
+<h1>Employees</h1>
 
-Welcome to your new app.
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Gross Salary</th>
+                <th>Benefits per Paycheck</th>
+                <th>Net Paycheck</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Employees)
+            {
+                <tr>
+                    <td>@employee.Name</td>
+                    <td>@employee.AnnualSalary</td>
+                    <td>@employee.BenefitsCostPerPay</td>
+                    <td>@employee.NetPaycheck</td>
+                </tr>
+            }
+        
+        </tbody>
+    </table>
 
+@code {
+    // TODO: Error handling
+    // TODO: Loading state
+    // TODO: This ViewModel stuff is fine I guess, but should really make EmployeeRow components that take a cascaded Employer
+    // TODO: Handle multiple or zero benefits
+
+    private List<EmployeeViewModel> Employees { get; set; } = default!;
+
+    protected override void OnParametersSet()
+    {
+        var employer = DataService.GetEmployer();
+        Employees = employer.Employees.Select(e => new EmployeeViewModel(e, employer)).ToList();
+        base.OnParametersSet();
+    }
+
+    private class EmployeeViewModel
+    {
+        public string Name { get; private set; }
+        public string AnnualSalary { get; private set; }
+        public string BenefitsCostPerPay { get; private set; }
+        public string NetPaycheck { get; private set; }
+
+        public EmployeeViewModel(Employee employee, Employer employer)
+        {
+            var benefit = employer.Benefits.First();
+            var benefitCostPerYear = benefit.CalculateCost(employee);
+            var benefitsCostPerPay = benefitCostPerYear / employer.PayPeriodsPerYear;
+            var netPaycheck = (employee.AnnualSalary / employer.PayPeriodsPerYear) - benefitsCostPerPay;
+
+            
+            Name = employee.Name;
+            AnnualSalary = employee.AnnualSalary.ToString("C");
+            BenefitsCostPerPay = benefitsCostPerPay.ToString("C");
+            NetPaycheck = netPaycheck.ToString("C");
+        }
+    }
+}

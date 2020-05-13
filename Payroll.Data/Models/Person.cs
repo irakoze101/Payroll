@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Payroll.Models
+namespace Payroll.Data.Models
 {
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public class Person

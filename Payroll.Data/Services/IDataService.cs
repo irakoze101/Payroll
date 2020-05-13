@@ -1,9 +1,15 @@
-﻿using Payroll.Models;
+﻿using Payroll.Data.Models;
 using System.Collections.Generic;
 
-namespace Payroll.Services
+namespace Payroll.Data.Services
 {
-    interface IDataService
+    /// <summary>
+    /// Service used to store and retrieve data models.
+    /// </summary>
+    /// <remarks>In an app that persisted data to a backend, this would have to be expanded to
+    /// support multiple employers and only return data for the currently signed-in employer.
+    /// </remarks>
+    public interface IDataService
     {
         /// <summary>
         /// Returns all employees

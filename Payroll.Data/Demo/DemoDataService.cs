@@ -1,9 +1,10 @@
-﻿using Payroll.Models;
-using Payroll.Services;
+﻿using Payroll.Data.Models;
+using Payroll.Data.Services;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
-namespace Payroll.Demo
+namespace Payroll.Data.Demo
 {
     /// <summary>
     /// Non-persistent data service that simply wraps a dictionary of IDs to Employees, starting empty.

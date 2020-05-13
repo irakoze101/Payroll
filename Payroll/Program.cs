@@ -20,7 +20,7 @@ namespace Payroll
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddSingleton<IDataService, DemoDataService>();
+            builder.Services.AddSingleton<IDataService, PrepopulatedDemoDataService>();
 
             await builder.Build().RunAsync();
         }

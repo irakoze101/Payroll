@@ -2,6 +2,7 @@
 using Payroll.Data.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Payroll.Data.Demo
 {
@@ -10,7 +11,8 @@ namespace Payroll.Data.Demo
     /// </summary>
     public class DemoDataService : IDataService
     {
-        private readonly Dictionary<Guid, Employee> _employees = new Dictionary<Guid, Employee>();
+        protected virtual List<Employee> _initialEmployeeData => new List<Employee>();
+        protected readonly Dictionary<Guid, Employee> _employees;
 
         private static class Costs
         {
@@ -50,6 +52,21 @@ namespace Payroll.Data.Demo
                 return totalCost;
             },
         };
+
+        public DemoDataService()
+        {
+            try
+            {
+                // Intentional dereference
+#pragma warning disable CS8629 // Nullable value type may be null.
+                _employees = _initialEmployeeData.ToDictionary(e => e.Id.Value);
+#pragma warning restore CS8629 // Nullable value type may be null.
+            }
+            catch (NullReferenceException e)
+            {
+                throw new InvalidOperationException("All Employees in initial data must have an ID!", e);
+            }
+        }
 
         public IReadOnlyCollection<Employee> GetEmployees()
         {

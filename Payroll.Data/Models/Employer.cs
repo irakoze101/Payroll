@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Payroll.Data.Models
 {
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public class Employer
     {
         public IReadOnlyCollection<Employee> Employees { get; set; }
@@ -13,6 +12,14 @@ namespace Payroll.Data.Models
         public int PayPeriodsPerYear { get; set; }
 
         public IReadOnlyCollection<Benefit> Benefits { get; set; }
+
+        public Employer(IReadOnlyCollection<Employee> employees,
+                        int payPeriodsPerYear,
+                        IReadOnlyCollection<Benefit> benefits)
+        {
+            Employees = employees;
+            PayPeriodsPerYear = payPeriodsPerYear;
+            Benefits = benefits;
+        }
     }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 }

@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Payroll.Data.Models
 {
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public class Employee : Person
     {
         public Guid? Id { get; set; }
@@ -16,6 +15,15 @@ namespace Payroll.Data.Models
         public Person? Spouse { get; set; }
 
         public IList<Person> Dependents { get; set; }
+
+        public Employee(string name,
+                        decimal annualSalary,
+                        Person? spouse,
+                        IList<Person> dependents) : base(name)
+        {
+            AnnualSalary = annualSalary;
+            Spouse = spouse;
+            Dependents = dependents;
+        }
     }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 }

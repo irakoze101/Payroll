@@ -2,7 +2,6 @@
 using Payroll.Data.Services;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Payroll.Data.Demo
 {
@@ -27,6 +26,8 @@ namespace Payroll.Data.Demo
             {
                 Func<Person, decimal, decimal> costForPerson = (person, cost) =>
                 {
+                    if (string.IsNullOrWhiteSpace(person.Name)) return cost;
+
                     if (person.Name.ToUpper()[0] == 'A')
                     {
                         return cost * 0.9m;
@@ -50,7 +51,7 @@ namespace Payroll.Data.Demo
             },
         };
 
-        public IReadOnlyCollection<Employee> AllEmployees()
+        public IReadOnlyCollection<Employee> GetEmployees()
         {
             return _employees.Values;
         }
@@ -83,11 +84,8 @@ namespace Payroll.Data.Demo
             return new List<Benefit> { _benefit };
         }
 
-        public Employer GetEmployer() => new Employer
-        {
-            Benefits = GetBenefits(),
-            Employees = AllEmployees(),
-            PayPeriodsPerYear = 26,
-        };
+        public Employer GetEmployer() => new Employer(GetEmployees(),
+                                                      26,
+                                                      GetBenefits());
     }
 }

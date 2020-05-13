@@ -20,7 +20,7 @@ namespace Payroll.Data.Services
         /// Returns all employees.
         /// </summary>
         /// <returns></returns>
-        IReadOnlyCollection<Employee> AllEmployees();
+        IReadOnlyCollection<Employee> GetEmployees();
         /// <summary>
         /// If <see cref="Employee.Id"/> is null, creates a new employee record and updates the
         /// parameter's Id; otherwise, updates an existing record.

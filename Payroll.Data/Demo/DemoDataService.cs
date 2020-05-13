@@ -13,6 +13,43 @@ namespace Payroll.Data.Demo
     {
         private readonly Dictionary<Guid, Employee> _employees = new Dictionary<Guid, Employee>();
 
+        private static class Costs
+        {
+            public const decimal Employee = 1000m;
+            public const decimal Spouse = 500m;
+            public const decimal Dependent = 500m;
+        }
+
+        private readonly Benefit _benefit = new Benefit()
+        {
+            Name = "Benefits",
+            CalculateCost = employee =>
+            {
+                Func<Person, decimal, decimal> costForPerson = (person, cost) =>
+                {
+                    if (person.Name.ToUpper()[0] == 'A')
+                    {
+                        return cost * 0.9m;
+                    }
+                    return cost;
+                };
+
+                var totalCost = costForPerson(employee, Costs.Employee);
+
+                if (employee.Spouse != null)
+                {
+                    totalCost += costForPerson(employee.Spouse, Costs.Spouse);
+                }
+
+                foreach (var dependent in employee.Dependents)
+                {
+                    totalCost += costForPerson(dependent, Costs.Dependent);
+                }
+
+                return totalCost;
+            },
+        };
+
         public IReadOnlyCollection<Employee> AllEmployees()
         {
             return _employees.Values;
@@ -40,5 +77,17 @@ namespace Payroll.Data.Demo
 
             _employees[employee.Id.Value] = employee;
         }
+
+        public IReadOnlyCollection<Benefit> GetBenefits()
+        {
+            return new List<Benefit> { _benefit };
+        }
+
+        public Employer GetEmployer() => new Employer
+        {
+            Benefits = GetBenefits(),
+            Employees = AllEmployees(),
+            PayPeriodsPerYear = 26,
+        };
     }
 }

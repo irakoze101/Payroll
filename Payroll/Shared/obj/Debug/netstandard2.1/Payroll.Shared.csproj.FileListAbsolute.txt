@@ -1,0 +1,9 @@
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\bin\Debug\netstandard2.1\Payroll.Shared.deps.json
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\bin\Debug\netstandard2.1\Payroll.Shared.dll
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\obj\Debug\netstandard2.1\Payroll.Shared.csprojAssemblyReference.cache
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\obj\Debug\netstandard2.1\Payroll.Shared.AssemblyInfoInputs.cache
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\obj\Debug\netstandard2.1\Payroll.Shared.AssemblyInfo.cs
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\obj\Debug\netstandard2.1\Payroll.Shared.csproj.CoreCompileInputs.cache
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\bin\Debug\netstandard2.1\Payroll.Shared.pdb
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\obj\Debug\netstandard2.1\Payroll.Shared.dll
+C:\Users\stefanglr\repos\Payroll\Payroll\Payroll\Shared\obj\Debug\netstandard2.1\Payroll.Shared.pdb

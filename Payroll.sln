@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30105.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll", "Payroll\Payroll.csproj", "{3612CCBA-B900-4E20-B800-B33FC18902ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payroll", "Payroll\Payroll.csproj", "{3612CCBA-B900-4E20-B800-B33FC18902ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll.Data", "Payroll.Data\Payroll.Data.csproj", "{489079D3-E078-4FAD-B8F5-E250D07D659C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payroll.Data", "Payroll.Data\Payroll.Data.csproj", "{489079D3-E078-4FAD-B8F5-E250D07D659C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll.Tests", "Payroll.Tests\Payroll.Tests.csproj", "{3CF78164-EE35-48A2-A56A-49B47E84E7BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payroll.Tests", "Payroll.Tests\Payroll.Tests.csproj", "{3CF78164-EE35-48A2-A56A-49B47E84E7BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

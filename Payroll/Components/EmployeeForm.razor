@@ -1,0 +1,86 @@
+﻿@using Payroll.Data.Models
+@using Payroll.Data.Services
+@inject IDataService DataService 
+@inject NavigationManager NavigationManager
+
+
+<EditForm Model="@Employee" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="name" @bind-Value="Employee.Name" />
+    <InputNumber id="salary" @bind-Value="Employee.AnnualSalary" />
+    
+    @if (Employee.Spouse != null)
+    {
+        <InputText id="spouse" @bind-Value="Employee.Spouse.Name" /> <button type="button" @onclick="@RemoveSpouse">🚫</button>
+    }
+    else
+    {
+        <button type="button">Add Spouse</button>
+    }
+
+    @for (int i = 0; i < Employee.Dependents.Count; i++)
+    {
+        <InputText @key="@Employee.Dependents[i]" @bind-Value="Employee.Dependents[i].Name" /> <button type="button" @onclick="@(() => RemoveDependent(i))">🚫</button>
+    }
+    <button type="button">Add Dependent</button>
+
+    <button type="submit">Save &amp; return</button>
+    <button type="button">Cancel</button>
+</EditForm>
+ 
+@code {
+    [Parameter]
+    public Employee Employee { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        if (Employee == null)
+        {
+            // If no employee passed, create a new one with no ID
+            Employee = new Employee(string.Empty, 52_000m, null, new List<Person>());
+        }
+        base.OnInitialized();
+    }
+
+    private void AddSpouse()
+    {
+        if (Employee.Spouse != null) return;
+        Employee.Spouse = new Person(string.Empty);
+    }
+
+    private void RemoveSpouse()
+    {
+        Employee.Spouse = null;
+    }
+
+    private void AddDependent()
+    {
+        Employee.Dependents.Add(new Person(string.Empty));
+    }
+
+    private void RemoveDependent(int index)
+    {
+        if (index >= Employee.Dependents.Count || index < 0) return;
+        Employee.Dependents.RemoveAt(index);
+    }
+
+    private void Save()
+    {
+        if (Employee != null)
+        {
+            DataService.SaveEmployee(Employee);
+            NavigationManager.NavigateTo("edit-employees");
+        }
+        else
+        {
+            // TODO: Error display
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("edit-employees");
+    }
+}

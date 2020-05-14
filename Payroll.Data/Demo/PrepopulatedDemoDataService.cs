@@ -6,7 +6,7 @@ namespace Payroll.Data.Demo
 {
     public class PrepopulatedDemoDataService : DemoDataService
     {
-        private const decimal _salary = 26m * 2000;
+        private const decimal _salary = 26m * 2_000;
         protected override List<Employee> _initialEmployeeData => new List<Employee>
         {
             new Employee("Aaron",
@@ -16,7 +16,7 @@ namespace Payroll.Data.Demo
                          {
                          })
             {
-                Id = Guid.NewGuid(),
+                Id = 1,
             },
             new Employee("Brenda",
                          _salary,
@@ -25,9 +25,8 @@ namespace Payroll.Data.Demo
                          {
                          })
             {
-                Id = Guid.NewGuid(),
+                Id = 2,
             },
-            // TODO: Make sure you handle negative paychecks somehow 😬
             new Employee("Stefan",
                          _salary,
                          new Person("Felix"),
@@ -40,14 +39,14 @@ namespace Payroll.Data.Demo
                              new Person("Eek"),
                          })
             {
-                Id = Guid.NewGuid(),
+                Id = 3,
             },
             new Employee("Zaphod",
                          _salary,
                          null,
                          new List<Person>())
             {
-                Id = Guid.NewGuid(),
+                Id = 4
             },
         };
     }

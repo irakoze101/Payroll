@@ -1,0 +1,40 @@
+﻿@page "/new-employee"
+@page "/edit-employee/{Id:int}"
+@using Payroll.Components 
+@using Payroll.Data.Models 
+@using Payroll.Data.Services
+@inject IDataService DataService
+
+@if (Id.HasValue)
+{
+    <h3>Edit Employee</h3>
+}
+else
+{
+    <h3>New Employee</h3>
+}
+
+<EmployeeForm Id="@Id" />
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Employee? Employee { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Id.HasValue)
+        {
+            try
+            {
+                Employee = DataService.GetEmployee(Id.Value);
+            }
+            catch (Exception e)
+            {
+                // TODO: Error handling
+            }
+        }
+        base.OnInitialized();
+    }
+}

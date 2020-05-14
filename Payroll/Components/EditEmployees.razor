@@ -1,0 +1,47 @@
+﻿@page "/edit-employees"
+@using Payroll.Data.Services
+@using Payroll.Data.Models 
+@inject IDataService DataService
+@inject NavigationManager NavigationManager 
+
+<h3>EditEmployees</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Employees)
+        {
+            <tr>
+                <td>@employee.Name</td>
+                <td>📝</td>
+                <td>🚫</td>
+            </tr>
+        }
+    
+    </tbody>
+</table>
+
+@code {
+    private List<Employee> Employees { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        Employees = DataService.GetEmployees().ToList();
+        base.OnParametersSet();
+    }
+
+    private void EditEmployee(Employee employee)
+    {
+        if (employee.Id == null)
+        {
+            // TODO: Log to console?
+            return;
+        }
+    }
+}

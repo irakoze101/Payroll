@@ -14,28 +14,27 @@ namespace Payroll.Data.Services
         /// <summary>
         /// Gets the current employer.
         /// </summary>
-        /// <returns>The current employer.</returns>
         Employer GetEmployer();
+        /// <summary>
+        /// Gets employee by ID.
+        /// </summary>
+        Employee GetEmployee(int id);
         /// <summary>
         /// Returns all employees.
         /// </summary>
-        /// <returns></returns>
         IReadOnlyCollection<Employee> GetEmployees();
         /// <summary>
         /// If <see cref="Employee.Id"/> is null, creates a new employee record and updates the
         /// parameter's Id; otherwise, updates an existing record.
         /// </summary>
-        /// <param name="employee">The employee to create or update.</param>
         void SaveEmployee(Employee employee);
         /// <summary>
         /// Deletes an existing employee. <see cref="Employee.Id"/> must not be null.
         /// </summary>
-        /// <param name="employee">The employee to delete.</param>
         void DeleteEmployee(Employee employee);
         /// <summary>
         /// Returns all benefits provided by the employer.
         /// </summary>
-        /// <returns>All benefits provided by the employer.</returns>
         IReadOnlyCollection<IBenefit> GetBenefits();
     }
 }

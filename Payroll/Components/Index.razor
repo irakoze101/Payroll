@@ -4,28 +4,28 @@
 
 <h1>Employees</h1>
 
-    <table class="table">
-        <thead>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Gross Salary</th>
+            <th>Benefits per Paycheck</th>
+            <th>Net Paycheck</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Employees)
+        {
             <tr>
-                <th>Name</th>
-                <th>Gross Salary</th>
-                <th>Benefits per Paycheck</th>
-                <th>Net Paycheck</th>
+                <td>@employee.Name</td>
+                <td>@employee.AnnualSalary</td>
+                <td>@employee.BenefitsCostPerPay</td>
+                <td>@employee.NetPaycheck</td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var employee in Employees)
-            {
-                <tr>
-                    <td>@employee.Name</td>
-                    <td>@employee.AnnualSalary</td>
-                    <td>@employee.BenefitsCostPerPay</td>
-                    <td>@employee.NetPaycheck</td>
-                </tr>
-            }
-        
-        </tbody>
-    </table>
+        }
+    
+    </tbody>
+</table>
 
 @code {
     // TODO: Error handling
@@ -35,7 +35,7 @@
 
     private List<EmployeeViewModel> Employees { get; set; } = default!;
 
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
         var employer = DataService.GetEmployer();
         Employees = employer.Employees.Select(e => new EmployeeViewModel(e, employer)).ToList();

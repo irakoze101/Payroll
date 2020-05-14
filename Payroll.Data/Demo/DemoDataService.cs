@@ -12,7 +12,7 @@ namespace Payroll.Data.Demo
     public class DemoDataService : IDataService
     {
         protected virtual List<Employee> _initialEmployeeData => new List<Employee>();
-        protected readonly Dictionary<Guid, Employee> _employees;
+        protected readonly Dictionary<int, Employee> _employees;
 
         private readonly IBenefit _benefit = new DemoBenefit();
 
@@ -36,6 +36,18 @@ namespace Payroll.Data.Demo
             return _employees.Values;
         }
 
+        public Employee GetEmployee(int id)
+        {
+            try
+            {
+                return _employees[id];
+            }
+            catch (KeyNotFoundException e)
+            {
+                throw new KeyNotFoundException($"No employee found with id {id}", e);
+            }
+        }
+
         public void DeleteEmployee(Employee employee)
         {
             var id = employee.Id ?? throw new InvalidOperationException("Employee with null Id cannot be deleted");
@@ -47,13 +59,7 @@ namespace Payroll.Data.Demo
         {
             if (!employee.Id.HasValue)
             {
-                var newId = Guid.NewGuid();
-                while (true)
-                {
-                    if (!_employees.ContainsKey(newId)) break;
-                    newId = Guid.NewGuid();
-                }
-                employee.Id = newId;
+                employee.Id = _employees.Keys.Max() + 1;
             }
 
             _employees[employee.Id.Value] = employee;

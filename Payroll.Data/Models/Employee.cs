@@ -6,7 +6,7 @@ namespace Payroll.Data.Models
 {
     public class Employee : Person
     {
-        public Guid? Id { get; set; }
+        public int? Id { get; set; }
 
         [Required(ErrorMessage = "Every Employee must have a salary")]
         [Range(1, double.PositiveInfinity)]

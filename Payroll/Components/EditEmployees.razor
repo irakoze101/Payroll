@@ -4,7 +4,7 @@
 @inject IDataService DataService
 @inject NavigationManager NavigationManager 
 
-<h3>EditEmployees</h3>
+<h3>Edit Employees</h3>
 
 <table class="table">
     <thead>
@@ -17,15 +17,15 @@
     <tbody>
         @foreach (var employee in Employees)
         {
-            <tr>
+            <tr @key="@employee">
                 <td>@employee.Name</td>
-                <td>📝</td>
-                <td>🚫</td>
+                <td @onclick="@(() => EditEmployee(employee))">📝</td>
+                <td @onclick="@(() => DeleteEmployee(employee))">🚫</td>
             </tr>
         }
-    
     </tbody>
 </table>
+<button @onclick="@AddEmployee">Add Employee</button>
 
 @code {
     private List<Employee> Employees { get; set; } = default!;
@@ -38,10 +38,26 @@
 
     private void EditEmployee(Employee employee)
     {
-        if (employee.Id == null)
+        if (employee.Id == null) return;
+        NavigationManager.NavigateTo($"/edit-employee/{employee.Id.Value}");
+    }
+
+    private void DeleteEmployee(Employee employee)
+    {
+        if (employee.Id == null) return;
+        try
         {
-            // TODO: Log to console?
-            return;
+            DataService.DeleteEmployee(employee);
+            Employees.Remove(employee);
         }
+        catch (Exception)
+        {
+            // ErrorTodo
+        }
+    }
+
+    private void AddEmployee()
+    {
+        NavigationManager.NavigateTo("/new-employee");
     }
 }

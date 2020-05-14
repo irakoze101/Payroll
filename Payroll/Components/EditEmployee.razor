@@ -1,6 +1,5 @@
 ﻿@page "/new-employee"
 @page "/edit-employee/{Id:int}"
-@using Payroll.Components 
 @using Payroll.Data.Models 
 @using Payroll.Data.Services
 @inject IDataService DataService
@@ -14,7 +13,7 @@ else
     <h3>New Employee</h3>
 }
 
-<EmployeeForm Id="@Id" />
+<EmployeeForm Employee="@Employee" />
 
 @code {
     [Parameter]
@@ -30,9 +29,9 @@ else
             {
                 Employee = DataService.GetEmployee(Id.Value);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                // TODO: Error handling
+                // ErrorTodo
             }
         }
         base.OnInitialized();

@@ -4,30 +4,38 @@
 @inject NavigationManager NavigationManager
 
 
+<!-- TODO: EditForm doesn't seem to be validating based on the annotations as expected -->
 <EditForm Model="@Employee" OnValidSubmit="Save">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputText id="name" @bind-Value="Employee.Name" />
-    <InputNumber id="salary" @bind-Value="Employee.AnnualSalary" />
+    Name: <InputText id="name" @bind-Value="Employee.Name" />
+    <br />
+    Salary: <InputNumber id="salary" @bind-Value="Employee.AnnualSalary" />
+    <br />
     
     @if (Employee.Spouse != null)
     {
-        <InputText id="spouse" @bind-Value="Employee.Spouse.Name" /> <button type="button" @onclick="@RemoveSpouse">🚫</button>
+        <text>Spouse: </text><InputText id="spouse" @bind-Value="Employee.Spouse.Name" /> <button type="button" @onclick="@RemoveSpouse">🚫</button>
     }
     else
     {
-        <button type="button">Add Spouse</button>
+        <button type="button" @onclick="@AddSpouse">Add Spouse</button>
     }
+    <br />
 
     @for (int i = 0; i < Employee.Dependents.Count; i++)
     {
-        <InputText @key="@Employee.Dependents[i]" @bind-Value="Employee.Dependents[i].Name" /> <button type="button" @onclick="@(() => RemoveDependent(i))">🚫</button>
+        <!-- closures!! -->
+        var j = i;
+        <InputText @key="@Employee.Dependents[j]" @bind-Value="Employee.Dependents[j].Name" /> <button type="button" @onclick="@(() => RemoveDependent(j))">🚫</button>
+        <br />
     }
-    <button type="button">Add Dependent</button>
+    <button type="button" @onclick="@AddDependent">Add Dependent</button>
+    <br />
 
-    <button type="submit">Save &amp; return</button>
-    <button type="button">Cancel</button>
+    <button type="button" @onclick="@Cancel">Cancel</button>
+    <button type="submit" @onclick="@Save">Save &amp; return</button>
 </EditForm>
  
 @code {
@@ -75,12 +83,12 @@
         }
         else
         {
-            // TODO: Error display
+            // ErrorTodo
         }
     }
 
     private void Cancel()
     {
-        NavigationManager.NavigateTo("edit-employees");
+        NavigationManager.NavigateTo("/edit-employees");
     }
 }

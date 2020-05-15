@@ -1,0 +1,71 @@
+﻿@page "/edit-employees"
+@using Microsoft.AspNetCore.Authorization
+@using Payroll.Shared.Models
+@attribute [Authorize]
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Edit Employees</h3>
+
+@if (Employees == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Employees)
+        {
+            // No need for a loop-local variable in foreach loops as of C# 5, unlike for loops
+            <tr @key="@employee">
+                <td>@employee.Name</td>
+                <td ><button @onclick="@(() => EditEmployee(employee))">📝</button></td>
+                <td ><button @onclick="@(() => DeleteEmployee(employee))">🚫</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button @onclick="@AddEmployee">Add Employee</button>
+}
+
+@code {
+    private List<Employee>? Employees { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Employees = await Http.GetFromJsonAsync<List<Employee>>("api/Employees");
+    }
+
+    private void EditEmployee(Employee employee)
+    {
+        NavigationManager.NavigateTo($"/edit-employee/{employee.Id}");
+    }
+
+    private async Task DeleteEmployee(Employee employee)
+    {
+        try
+        {
+            var result = await Http.DeleteAsync($"api/Employees/{employee.Id}");
+            result.EnsureSuccessStatusCode();
+            Employees!.Remove(employee);
+        }
+        catch (Exception e)
+        {
+            // ErrorTodo
+            Console.WriteLine($"Error deleting employee {employee.Id}: {e.Message}");
+        }
+    }
+
+    private void AddEmployee()
+    {
+        NavigationManager.NavigateTo("/new-employee");
+    }
+}

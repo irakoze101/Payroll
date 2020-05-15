@@ -1,0 +1,103 @@
+﻿@using Payroll.Shared.EditModels
+@inject NavigationManager NavigationManager
+
+<!-- TODO: EditForm doesn't seem to be validating based on the annotations as expected -->
+<EditForm Model="@Employee" OnValidSubmit="Save">
+    <!-- TODO: manual validation, enable/disable button -->
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    Name: <InputText id="name" @bind-Value="Employee.Name" />
+    <br />
+    Salary: <InputNumber id="salary" @bind-Value="Employee.AnnualSalary" />
+    <br />
+
+    @if (Employee.Spouse != null)
+    {
+        <text>Spouse: </text><InputText id="spouse" @bind-Value="Employee.Spouse.Name" /> <button type="button" @onclick="@RemoveSpouse">🚫</button>
+    }
+    else
+    {
+        <button type="button" @onclick="@AddSpouse">Add Spouse</button>
+    }
+    <br />
+
+    @for (int i = 0; i < Employee.Dependents.Count; i++)
+    {
+        <!-- closures!! -->
+        var j = i;
+        <InputText @key="@Employee.Dependents[j]" @bind-Value="Employee.Dependents[j].Name" /> <button type="button" @onclick="@(() => RemoveDependent(j))">🚫</button>
+        <br />
+    }
+    <button type="button" @onclick="@AddDependent">Add Dependent</button>
+    <br />
+
+    <button type="button" @onclick="@Cancel">Cancel</button>
+    <button type="submit" @onclick="@Save">Save &amp; return</button>
+</EditForm>
+
+@code {
+        [Parameter]
+        public EmployeeEditModel Employee { get; set; } = default!;
+        [Parameter]
+        public EventCallback OnCancel { get; set; }
+        [Parameter]
+        public EventCallback<EmployeeEditModel> OnSave { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Employee == null)
+        {
+            // If no employee passed, create a new one with no ID
+            //Employee = new Employee(string.Empty, 52_000m, null, new List<Person>());
+            Employee = new EmployeeEditModel
+            {
+                AnnualSalary = 52_000,
+            };
+        }
+        base.OnInitialized();
+    }
+
+    private void AddSpouse()
+    {
+        if (Employee.Spouse != null) return;
+        Employee.Spouse = new PersonEditModel();
+    }
+
+    private void RemoveSpouse()
+    {
+        Employee.Spouse = null;
+    }
+
+    private void AddDependent()
+    {
+        Employee.Dependents.Add(new PersonEditModel());
+    }
+
+    private void RemoveDependent(int index)
+    {
+        if (index >= Employee.Dependents.Count || index < 0) return;
+        Employee.Dependents.RemoveAt(index);
+    }
+
+    private Task Save()
+    {
+        return OnSave.InvokeAsync(Employee) ?? Task.CompletedTask;
+        /*
+        if (Employee != null)
+        {
+            DataService.SaveEmployee(Employee);
+            NavigationManager.NavigateTo("edit-employees");
+        }
+        else
+        {
+            // ErrorTodo
+        }
+        */
+    }
+
+    private Task Cancel()
+    {
+        return OnCancel.InvokeAsync(null) ?? Task.CompletedTask;
+    }
+}

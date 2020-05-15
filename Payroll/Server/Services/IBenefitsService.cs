@@ -1,8 +1,4 @@
-﻿using Payroll.Server.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Payroll.Shared.Models;
 
 namespace Payroll.Server.Services
 {

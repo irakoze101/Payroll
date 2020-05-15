@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30105.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll.Server", "Payroll\Server\Payroll.Server.csproj", "{B911C86C-BD9C-428F-B4FB-6D78ECEF524F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payroll.Server", "Payroll\Server\Payroll.Server.csproj", "{B911C86C-BD9C-428F-B4FB-6D78ECEF524F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll.Client", "Payroll\Client\Payroll.Client.csproj", "{6FC4FCBB-B0FC-4238-AEF5-2F506A92BEA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payroll.Client", "Payroll\Client\Payroll.Client.csproj", "{6FC4FCBB-B0FC-4238-AEF5-2F506A92BEA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll.Shared", "Payroll\Shared\Payroll.Shared.csproj", "{ED646951-471D-43F5-9554-1547EC51A177}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payroll.Shared", "Payroll\Shared\Payroll.Shared.csproj", "{ED646951-471D-43F5-9554-1547EC51A177}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

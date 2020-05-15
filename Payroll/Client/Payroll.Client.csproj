@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Shared\Payroll.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EditModels\" />
+  </ItemGroup>
+
 </Project>

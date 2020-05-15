@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Payroll.Server.Data;
-using Payroll.Server.Models;
+using Payroll.Shared.Models;
 using Payroll.Server.Services;
 using Payroll.Shared.ApiModels;
 

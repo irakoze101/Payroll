@@ -1,0 +1,71 @@
+﻿@page "/new-employee"
+@page "/edit-employee/{Id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Payroll.Shared.EditModels 
+@using Payroll.Shared.Models
+@attribute [Authorize]
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if (Id.HasValue)
+{
+    <h3>Edit Employee</h3>
+}
+else
+{
+    <h3>New Employee</h3>
+}
+
+<EmployeeForm Employee="@EditModel" OnCancel="@OnCancel" OnSave="@OnSave"/>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private EmployeeEditModel? EditModel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            try
+            {
+                var employee = await Http.GetFromJsonAsync<Employee>($"api/Employees/{Id.Value}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed to fetch employee {Id.Value}: {e.Message}");
+            }
+        }
+    }
+
+    private void OnCancel()
+    {
+        NavigationManager.NavigateTo("/edit-employees");
+    }
+
+    private async Task OnSave(EmployeeEditModel editModel)
+    {
+        try
+        {
+            var employee = editModel.ToEmployee();
+            if (Id == null)
+            {
+                var result = await Http.PostAsJsonAsync<Employee>("api/Employees", employee);
+                result.EnsureSuccessStatusCode();
+            }
+            else
+            {
+                var result = await Http.PutAsJsonAsync<Employee>($"api/Employees/{Id.Value}", employee);
+                result.EnsureSuccessStatusCode();
+            }
+            NavigationManager.NavigateTo("/edit-employees");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed to save employee: {e.Message}");
+            // TODO: error handling
+            throw;
+        }
+    }
+}

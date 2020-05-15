@@ -14,7 +14,6 @@ namespace Payroll.Server.Data
     {
         public DbSet<Employee> Employees { get; set; } = null!;
         public DbSet<Dependent> Dependents { get; set; } = null!;
-        public DbSet<Benefit> Benefits { get; set; } = null!;
 
         public ApplicationDbContext(
             DbContextOptions options,

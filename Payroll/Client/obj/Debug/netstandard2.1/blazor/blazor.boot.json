@@ -9,7 +9,7 @@
   "linkerEnabled": false,
   "resources": {
     "assembly": {
-      "Payroll.Client.dll": "sha256-pmkpl0P6fDPIEhNneEMvviLCElGn6wZwWp3weCo9L7k=",
+      "Payroll.Client.dll": "sha256-X43njDLyfdR36z7xJT+wgX6NNU5\/+efHA4FyPz8u7PI=",
       "System.Net.Http.Json.dll": "sha256-+IansbyiPIbBxBPwqKb6GLCNiqhuqeIc5S8yC5s7yF4=",
       "System.Buffers.dll": "sha256-ZxXy75PYbzJxNfAc\/SAP1nUYm4gt1jSaOpFnBb9m85M=",
       "mscorlib.dll": "sha256-uaG3AW80GeXVlZrMLb3Q0VZ6jBkzXqzaUAgKgtZbStA=",
@@ -47,7 +47,7 @@
       "Microsoft.Extensions.Logging.Abstractions.dll": "sha256-45ia6XmGIa5WI3cHUIE9KhVornlZleYW+B5FPpfD1wQ=",
       "Microsoft.Extensions.Options.dll": "sha256-oAIlpv09S\/0jXnze744E1V88Oaw8Ql1x3Alw0hsVYdw=",
       "Microsoft.Extensions.Primitives.dll": "sha256-DG1MjidH81NA50uWH63eWmXLCxt18sJzoF2oXVlyvlY=",
-      "Payroll.Shared.dll": "sha256-fIJOZ1L\/1k4rZPlINLerG3co6w8oVlDAlUaqIVutUC8=",
+      "Payroll.Shared.dll": "sha256-qOabaY8ZNvvVzG7FinPOoYCNUNu6HxCb08+tEf9pdqo=",
       "System.ComponentModel.Annotations.dll": "sha256-tmnkCmP9OzLUkpQ3LP7PRosi7gt5pyfEZCM6aqAokFI=",
       "System.ComponentModel.DataAnnotations.dll": "sha256-EVfe2zztNlGz7ITa8KrrSFdmM80WWrH3G9ETg5Nbg8Q=",
       "Microsoft.AspNetCore.Authorization.dll": "sha256-b6UoUDhAs2puarT1\/fueQ9IcLvLvpvVFDNy4Vt8NQ7k=",
@@ -69,8 +69,8 @@
       "Microsoft.JSInterop.WebAssembly.dll": "sha256-u5WlE+3+OPkr0mlHMJ6pS5OWVuHC3rk2HWyyA3R+xVY="
     },
     "pdb": {
-      "Payroll.Client.pdb": "sha256-bf\/tOwmTePkNdXdZ2XDiaOwn6au8FSVCv537Gh59ViE=",
-      "Payroll.Shared.pdb": "sha256-5pd8h\/FK7xmNeU5Csw2zsRDZ7nwwn3HALdgA8HnfFoo="
+      "Payroll.Client.pdb": "sha256-0o2ZVuSiYuo6Sb2DxpQ3VPzP6m+aO25Nb9Omrva0Y04=",
+      "Payroll.Shared.pdb": "sha256-DndQg1JxIXokQsRDwzJL\/os\/KPS5sssOlRsjbDAqddc="
     },
     "runtime": {
       "dotnet.3.2.0-rc1.20222.2.js": "sha256-iZCHkFXJWYNxCUFwhj+4oqR4fkEJc5YGjfTTvdIuX84=",

@@ -10,6 +10,5 @@ namespace Payroll.Server.Models
     {
         public int PayPeriodsPerYear { get; set; } = 26;
         public virtual ICollection<Employee> Employees { get; set; } = null!;
-        public virtual ICollection<EmployerBenefit> EmployerBenefits { get; set; } = null!;
     }
 }

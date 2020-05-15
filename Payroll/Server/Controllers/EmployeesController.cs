@@ -34,6 +34,7 @@ namespace Payroll.Server.Controllers
             if (userId == null) return new UnauthorizedResult();
 
             return await _context.Employees.Where(e => e.EmployerId == userId)
+                                           .Include(e => e.Dependents)
                                            .ToListAsync(cancelToken);
         }
 
@@ -44,7 +45,8 @@ namespace Payroll.Server.Controllers
             var userId = await UserId();
             if (userId == null) return new UnauthorizedResult();
 
-            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Employer.Id == userId &&
+            var employee = await _context.Employees.Include(e => e.Dependents)
+                                                   .FirstOrDefaultAsync(e => e.Employer.Id == userId &&
                                                                              e.Id == id,
                                                                         cancelToken);
 
@@ -62,9 +64,17 @@ namespace Payroll.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEmployee(int id, Employee employee, CancellationToken cancelToken)
         {
+            var userId = await UserId();
+            if (userId == null) return new UnauthorizedResult();
+
             if (id != employee.Id)
             {
                 return BadRequest();
+            }
+            if (!await _context.Employees.AnyAsync(e => e.EmployerId == userId && e.Id == id,
+                                                   cancelToken))
+            {
+                return NotFound();
             }
 
             _context.Entry(employee).State = EntityState.Modified;
@@ -75,7 +85,7 @@ namespace Payroll.Server.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EmployeeExists(id))
+                if (!(await EmployeeExistsAsync(id, cancelToken)))
                 {
                     return NotFound();
                 }
@@ -92,33 +102,42 @@ namespace Payroll.Server.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> PostEmployee(Employee employee, CancellationToken cancelToken)
         {
+            var userId = await UserId();
+            if (userId == null) return new UnauthorizedResult();
+
+            employee.EmployerId = userId;
             _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancelToken);
 
             return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
         }
 
         // DELETE: api/Employees/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Employee>> DeleteEmployee(int id)
+        public async Task<ActionResult<Employee>> DeleteEmployee(int id, CancellationToken cancelToken)
         {
-            var employee = await _context.Employees.FindAsync(id);
+            var userId = await UserId();
+            if (userId == null) return new UnauthorizedResult();
+
+            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Employer.Id == userId &&
+                                                                             e.Id == id,
+                                                                        cancelToken);
             if (employee == null)
             {
                 return NotFound();
             }
 
             _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancelToken);
 
             return employee;
         }
 
-        private bool EmployeeExists(int id)
+        private Task<bool> EmployeeExistsAsync(int id, CancellationToken cancelToken = default)
         {
-            return _context.Employees.Any(e => e.Id == id);
+            return _context.Employees.AnyAsync(e => e.Id == id, cancelToken);
         }
     }
 }

@@ -1,7 +1,60 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Payroll.Shared.ApiModels 
+@attribute [Authorize]
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
+<h1>Employees</h1>
 
-Welcome to your new app.
+@if (Summary == null)
+{
+    <p>Loading...</p>
+}
+else if (!Summary.Employees.Any())
+{
+    <p>Add some employees to get started!</p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Gross Salary</th>
+            <th>Benefits per Paycheck</th>
+            <th>Net Paycheck</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Summary.Employees)
+        {
+            <tr>
+                <td>@employee.Name</td>
+                <td>@employee.GrossAnnualSalary</td>
+                <td>@employee.BenefitsCostPerPay</td>
+                <td>@employee.NetPaycheck</td>
+            </tr>
+        }
+    
+    </tbody>
+</table>
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+
+    private PayrollSummary? Summary { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Summary = await Http.GetFromJsonAsync<PayrollSummary>("api/Payroll/Summary");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

@@ -24,6 +24,7 @@ namespace Payroll.Server.Controllers
             _benefitsService = benefitsService;
         }
 
+        [HttpGet]
         public async Task<ActionResult<PayrollSummary>> Summary(CancellationToken cancelToken)
         {
             var employer = await _userManager.GetUserAsync(User);

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using Payroll.Server.Data;
 using Payroll.Server.Models;
+using Payroll.Server.Services;
 
 namespace Payroll.Server
 {
@@ -45,6 +46,7 @@ namespace Payroll.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            services.AddSingleton<IBenefitsService, BenefitsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

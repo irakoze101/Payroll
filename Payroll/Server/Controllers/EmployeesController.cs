@@ -18,12 +18,9 @@ namespace Payroll.Server.Controllers
     [Authorize]
     public class EmployeesController : PayrollControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
-        public EmployeesController(ApplicationDbContext context,
-                                   UserManager<ApplicationUser> userManager) : base(userManager)
+        protected EmployeesController(ApplicationDbContext context,
+                                      UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
-            _context = context;
         }
 
         // GET: api/Employees

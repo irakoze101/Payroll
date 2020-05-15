@@ -13,13 +13,10 @@ namespace Payroll.Server.Models
         Child,
     };
 
-    public class Dependent
+    public class Dependent : Person
     {
         public int Id { get; set; }
         public Relationship Relationship { get; set; }
-
-        [Required]
-        public string Name { get; set; } = null!;
 
         public int EmployeeId { get; set; }
         public virtual Employee Employee { get; set; } = null!;

@@ -1,16 +1,39 @@
 ﻿using Payroll.Server.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Payroll.Server.Services
 {
     public class BenefitsService : IBenefitsService
     {
+        private static class Cost
+        {
+            public const decimal Employee = 1_000m;
+            public const decimal Dependent = 5000m;
+        }
+
         public decimal AnnualBenefitCost(Employee employee)
         {
-            throw new NotImplementedException();
+            // Name starting with 'A' gets a 10% discount
+            Func<Person, decimal, decimal> costForPerson = (person, cost) =>
+            {
+                if (string.IsNullOrWhiteSpace(person.Name)) return cost;
+
+                if (person.Name.ToUpper()[0] == 'A')
+                {
+                    return cost * 0.9m;
+                }
+                return cost;
+            };
+
+            var totalCost = costForPerson(employee, Cost.Employee);
+
+            foreach (var dependent in employee.Dependents)
+            {
+                totalCost += costForPerson(dependent, Cost.Dependent);
+            }
+
+            return totalCost;
+
         }
     }
 }

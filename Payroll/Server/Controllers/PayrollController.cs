@@ -19,14 +19,14 @@ namespace Payroll.Server.Controllers
     {
         private readonly IBenefitsService _benefitsService;
 
-        protected PayrollController(ApplicationDbContext context,
+        public PayrollController(ApplicationDbContext context,
                                     UserManager<ApplicationUser> userManager,
                                     IBenefitsService benefitsService) : base(context, userManager)
         {
             _benefitsService = benefitsService;
         }
 
-        [HttpGet]
+        [HttpGet("Summary")]
         public async Task<ActionResult<PayrollSummary>> Summary(CancellationToken cancelToken)
         {
             var employer = await _userManager.GetUserAsync(User);

@@ -28,9 +28,10 @@ namespace Payroll.Server.Controllers
             var userId = await UserId();
             if (userId == null) return new UnauthorizedResult();
 
-            return await _context.Employees.Where(e => e.EmployerId == userId)
-                                           .Include(e => e.Dependents)
-                                           .ToListAsync(cancelToken);
+            var employees =  await _context.Employees.Where(e => e.EmployerId == userId)
+                                                     .Include(e => e.Dependents)
+                                                     .ToListAsync(cancelToken);
+            return Ok(employees);
         }
 
         // GET: api/Employees/5
@@ -50,7 +51,7 @@ namespace Payroll.Server.Controllers
                 return NotFound();
             }
 
-            return employee;
+            return Ok(employee);
         }
 
         // PUT: api/Employees/5

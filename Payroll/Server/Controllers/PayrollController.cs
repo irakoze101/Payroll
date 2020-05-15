@@ -8,11 +8,13 @@ using Payroll.Server.Data;
 using Payroll.Shared.Models;
 using Payroll.Server.Services;
 using Payroll.Shared.ApiModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Payroll.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("api/[controller]")]
     public class PayrollController : PayrollControllerBase
     {
         private readonly IBenefitsService _benefitsService;
@@ -50,7 +52,7 @@ namespace Payroll.Server.Controllers
                 });
             }
 
-            return summary;
+            return Ok(summary);
         }
     }
 }

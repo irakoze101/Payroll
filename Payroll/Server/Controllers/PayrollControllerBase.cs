@@ -12,7 +12,7 @@ namespace Payroll.Server.Controllers
         protected readonly ApplicationDbContext _context;
 
         protected PayrollControllerBase(ApplicationDbContext context,
-                                        UserManager<ApplicationUser> userManager)
+                                        UserManager<ApplicationUser> userManager) : base()
         {
             _context = context;
             _userManager = userManager;

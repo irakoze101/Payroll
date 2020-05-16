@@ -1,4 +1,6 @@
-﻿namespace Payroll.Shared.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Payroll.Shared.Models
 {
     public enum Relationship
     {
@@ -11,6 +13,7 @@
         public Relationship Relationship { get; set; }
 
         public int EmployeeId { get; set; }
-        public virtual Employee Employee { get; set; } = null!;
+        [JsonIgnore]
+        public virtual Employee? Employee { get; set; }
     }
 }

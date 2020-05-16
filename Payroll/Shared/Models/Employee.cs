@@ -7,10 +7,12 @@ namespace Payroll.Shared.Models
     {
         public decimal AnnualSalary { get; set; } = 52_000;
 
-        [Required]
-        public string EmployerId { get; set; } = null!;
-        public virtual ApplicationUser Employer { get; set; } = null!;
+        // TODO: Making EmployerId non-nullable makes POSTs/PUTs fail when EmployerId
+        // is empty, but I don't want client to have to worry about this field.
+        // Is initializing this to string.Empty the right approach?
+        public string EmployerId { get; set; } = string.Empty;
+        public virtual ApplicationUser? Employer { get; set; }
 
-        public virtual ICollection<Dependent> Dependents { get; set; } = null!;
+        public virtual ICollection<Dependent>? Dependents { get; set; }
     }
 }

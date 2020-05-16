@@ -7,8 +7,8 @@ namespace Payroll.Shared.EditModels
     // UnitTestTodo
     public class EmployeeEditModel : PersonEditModel
     {
-        public decimal AnnualSalary { get; set; }
-        public PersonEditModel? Spouse { get; set; } = new PersonEditModel();
+        public decimal AnnualSalary { get; set; } = 52_000;
+        public PersonEditModel? Spouse { get; set; }
         public List<PersonEditModel> Dependents { get; set; } = new List<PersonEditModel>();
 
         public EmployeeEditModel() { }
@@ -29,7 +29,7 @@ namespace Payroll.Shared.EditModels
 
         public Employee ToEmployee()
         {
-            var employee = new Employee();
+            var employee = new Employee { Dependents = new List<Dependent>() };
             employee.Id = Id ?? default;
             employee.Name = Name;
             employee.AnnualSalary = AnnualSalary;

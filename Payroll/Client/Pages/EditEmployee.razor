@@ -16,7 +16,10 @@ else
     <h3>New Employee</h3>
 }
 
+@if (EditModel != null)
+{
 <EmployeeForm Employee="@EditModel" OnCancel="@OnCancel" OnSave="@OnSave"/>
+}
 
 @code {
     [Parameter]
@@ -31,11 +34,16 @@ else
             try
             {
                 var employee = await Http.GetFromJsonAsync<Employee>($"api/Employees/{Id.Value}");
+                EditModel = new EmployeeEditModel(employee);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Failed to fetch employee {Id.Value}: {e.Message}");
             }
+        }
+        else
+        {
+            EditModel = new EmployeeEditModel();
         }
     }
 

@@ -22,6 +22,10 @@
     }
     <br />
 
+    @if (Employee.Dependents.Any())
+    {
+        <p>Dependents</p>
+    }
     @for (int i = 0; i < Employee.Dependents.Count; i++)
     {
         <!-- closures!! -->
@@ -33,30 +37,16 @@
     <br />
 
     <button type="button" @onclick="@Cancel">Cancel</button>
-    <button type="submit" @onclick="@Save">Save &amp; return</button>
+    <button type="submit">Save &amp; return</button>
 </EditForm>
 
 @code {
         [Parameter]
-        public EmployeeEditModel Employee { get; set; } = default!;
+    public EmployeeEditModel Employee { get; set; } = new EmployeeEditModel();
         [Parameter]
         public EventCallback OnCancel { get; set; }
         [Parameter]
         public EventCallback<EmployeeEditModel> OnSave { get; set; }
-
-    protected override void OnInitialized()
-    {
-        if (Employee == null)
-        {
-            // If no employee passed, create a new one with no ID
-            //Employee = new Employee(string.Empty, 52_000m, null, new List<Person>());
-            Employee = new EmployeeEditModel
-            {
-                AnnualSalary = 52_000,
-            };
-        }
-        base.OnInitialized();
-    }
 
     private void AddSpouse()
     {

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Payroll.Server.Data;
 using Payroll.Shared.Models;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Payroll.Server.Controllers
@@ -18,10 +20,10 @@ namespace Payroll.Server.Controllers
             _userManager = userManager;
         }
 
-        protected async Task<string?> UserId()
+        protected string? GetUserId()
         {
-            var user = await _userManager.GetUserAsync(User);
-            return user?.Id;
+            // For the life of me, I can't get UserManager to work, so this will have to do.
+            return User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         }
     }
 }

@@ -9,6 +9,7 @@ using Payroll.Shared.Models;
 using Payroll.Server.Services;
 using Payroll.Shared.ApiModels;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Payroll.Server.Controllers
 {
@@ -20,8 +21,8 @@ namespace Payroll.Server.Controllers
         private readonly IBenefitsService _benefitsService;
 
         public PayrollController(ApplicationDbContext context,
-                                    UserManager<ApplicationUser> userManager,
-                                    IBenefitsService benefitsService) : base(context, userManager)
+                                 UserManager<ApplicationUser> userManager,
+                                 IBenefitsService benefitsService) : base(context, userManager)
         {
             _benefitsService = benefitsService;
         }
@@ -29,8 +30,14 @@ namespace Payroll.Server.Controllers
         [HttpGet("Summary")]
         public async Task<ActionResult<PayrollSummary>> Summary(CancellationToken cancelToken)
         {
-            var employer = await _userManager.GetUserAsync(User);
-            if (employer == null) return new UnauthorizedResult();
+            var userId = GetUserId();
+            if (string.IsNullOrWhiteSpace(userId)) return new UnauthorizedResult();
+
+            var employer = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId, cancelToken);
+            if (employer == null)
+            {
+                return new UnauthorizedResult();
+            }
 
             var employees = await _context.Employees.Include(e => e.Dependents)
                                                     .Where(e => e.EmployerId == employer.Id)

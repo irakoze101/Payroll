@@ -16,7 +16,7 @@ namespace Payroll.Server.Controllers
     [Authorize]
     public class EmployeesController : PayrollControllerBase
     {
-        protected EmployeesController(ApplicationDbContext context,
+        public EmployeesController(ApplicationDbContext context,
                                       UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
         }
@@ -25,7 +25,7 @@ namespace Payroll.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees(CancellationToken cancelToken)
         {
-            var userId = await UserId();
+            var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
             var employees =  await _context.Employees.Where(e => e.EmployerId == userId)
@@ -38,7 +38,7 @@ namespace Payroll.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id, CancellationToken cancelToken)
         {
-            var userId = await UserId();
+            var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
             var employee = await _context.Employees.Include(e => e.Dependents)
@@ -60,7 +60,7 @@ namespace Payroll.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEmployee(int id, Employee employee, CancellationToken cancelToken)
         {
-            var userId = await UserId();
+            var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
             if (id != employee.Id)
@@ -73,6 +73,7 @@ namespace Payroll.Server.Controllers
                 return NotFound();
             }
 
+            employee.EmployerId = userId;
             _context.Entry(employee).State = EntityState.Modified;
 
             try
@@ -100,7 +101,7 @@ namespace Payroll.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee, CancellationToken cancelToken)
         {
-            var userId = await UserId();
+            var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
             employee.EmployerId = userId;
@@ -114,7 +115,7 @@ namespace Payroll.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Employee>> DeleteEmployee(int id, CancellationToken cancelToken)
         {
-            var userId = await UserId();
+            var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
             var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Employer.Id == userId &&

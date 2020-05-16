@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Payroll.Server.Data;
 using Payroll.Server.Models;
 using Payroll.Server.Services;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Payroll.Server
 {
@@ -28,8 +30,15 @@ namespace Payroll.Server
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                // Purely for debugging speed.
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();

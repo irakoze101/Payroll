@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Payroll.Shared.Models
+namespace Payroll.Server.Models
 {
     public class Employee : Person
     {

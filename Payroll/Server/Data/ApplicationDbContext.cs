@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Payroll.Shared.Models;
+using Payroll.Server.Models;
 
 namespace Payroll.Server.Data
 {

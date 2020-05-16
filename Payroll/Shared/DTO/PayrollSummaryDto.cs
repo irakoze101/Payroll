@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Payroll.Shared.ApiModels
+namespace Payroll.Shared.DTO
 {
-    public class EmployeePayrollSummary
+    public class EmployeeSummaryDto
     {
         public string Name { get; set; } = string.Empty;
         public decimal GrossAnnualSalary { get; set; }
@@ -10,8 +10,8 @@ namespace Payroll.Shared.ApiModels
         public decimal NetPaycheck { get; set; }
     }
 
-    public class PayrollSummary
+    public class PayrollSummaryDto
     {
-        public List<EmployeePayrollSummary> Employees { get; set; } = new List<EmployeePayrollSummary>();
+        public List<EmployeeSummaryDto> Employees { get; set; } = new List<EmployeeSummaryDto>();
     }
 }

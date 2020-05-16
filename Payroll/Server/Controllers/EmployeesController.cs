@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Payroll.Server.Data;
-using Payroll.Shared.Models;
+using Payroll.Server.Mappings;
+using Payroll.Server.Models;
+using Payroll.Shared.DTO;
 
 namespace Payroll.Server.Controllers
 {
@@ -17,13 +19,13 @@ namespace Payroll.Server.Controllers
     public class EmployeesController : PayrollControllerBase
     {
         public EmployeesController(ApplicationDbContext context,
-                                      UserManager<ApplicationUser> userManager) : base(context, userManager)
+                                   UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
         }
 
         // GET: api/Employees
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees(CancellationToken cancelToken)
+        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees(CancellationToken cancelToken)
         {
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
@@ -31,18 +33,18 @@ namespace Payroll.Server.Controllers
             var employees =  await _context.Employees.Where(e => e.EmployerId == userId)
                                                      .Include(e => e.Dependents)
                                                      .ToListAsync(cancelToken);
-            return Ok(employees);
+            return Ok(employees.Select(e => e.ToDto()));
         }
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(int id, CancellationToken cancelToken)
+        public async Task<ActionResult<EmployeeDto>> GetEmployee(int id, CancellationToken cancelToken)
         {
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
             var employee = await _context.Employees.Include(e => e.Dependents)
-                                                   .FirstOrDefaultAsync(e => e.Employer.Id == userId &&
+                                                   .FirstOrDefaultAsync(e => e.Employer!.Id == userId &&
                                                                              e.Id == id,
                                                                         cancelToken);
 
@@ -51,30 +53,38 @@ namespace Payroll.Server.Controllers
                 return NotFound();
             }
 
-            return Ok(employee);
+            return Ok(employee.ToDto());
         }
 
         // PUT: api/Employees/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee, CancellationToken cancelToken)
+        public async Task<IActionResult> PutEmployee(int id, EmployeeDto dto, CancellationToken cancelToken)
         {
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            if (id != employee.Id)
+            if (id != dto.Id)
             {
                 return BadRequest();
             }
-            if (!await _context.Employees.AnyAsync(e => e.EmployerId == userId && e.Id == id,
-                                                   cancelToken))
+
+            var employee = await _context.Employees.Include(e => e.Dependents)
+                                                   .FirstOrDefaultAsync(e => e.EmployerId == userId && e.Id == id,
+                                                                        cancelToken);
+
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            employee.EmployerId = userId;
-            _context.Entry(employee).State = EntityState.Modified;
+            try
+            {
+                EmployeeMappings.MapForUpdate(dto, employee);
+            }
+            catch (MappingException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             try
             {
@@ -96,19 +106,17 @@ namespace Payroll.Server.Controllers
         }
 
         // POST: api/Employees
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee, CancellationToken cancelToken)
+        public async Task<ActionResult<Employee>> PostEmployee(EmployeeDto employeeDto, CancellationToken cancelToken)
         {
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            employee.EmployerId = userId;
+            var employee = employeeDto.ToEmployee(userId);
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync(cancelToken);
 
-            return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
+            return CreatedAtAction("GetEmployee", new { id = employeeDto.Id }, employeeDto);
         }
 
         // DELETE: api/Employees/5
@@ -118,7 +126,7 @@ namespace Payroll.Server.Controllers
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Employer.Id == userId &&
+            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Employer!.Id == userId &&
                                                                              e.Id == id,
                                                                         cancelToken);
             if (employee == null)

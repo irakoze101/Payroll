@@ -1,8 +1,7 @@
 ﻿@page "/new-employee"
 @page "/edit-employee/{Id:int}"
 @using Microsoft.AspNetCore.Authorization
-@using Payroll.Shared.EditModels 
-@using Payroll.Shared.Models
+@using Payroll.Shared.DTO
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -25,7 +24,7 @@ else
     [Parameter]
     public int? Id { get; set; }
 
-    private EmployeeEditModel? EditModel { get; set; }
+    private EmployeeDto? EditModel { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,8 +32,8 @@ else
         {
             try
             {
-                var employee = await Http.GetFromJsonAsync<Employee>($"api/Employees/{Id.Value}");
-                EditModel = new EmployeeEditModel(employee);
+                var employee = await Http.GetFromJsonAsync<EmployeeDto>($"api/Employees/{Id.Value}");
+                EditModel = new EmployeeDto();
             }
             catch (Exception e)
             {
@@ -43,7 +42,7 @@ else
         }
         else
         {
-            EditModel = new EmployeeEditModel();
+            EditModel = new EmployeeDto();
         }
     }
 
@@ -52,28 +51,18 @@ else
         NavigationManager.NavigateTo("/edit-employees");
     }
 
-    private async Task OnSave(EmployeeEditModel editModel)
+    private async Task OnSave(EmployeeDto employeeDto)
     {
-        try
+        if (Id == null)
         {
-            var employee = editModel.ToEmployee();
-            if (Id == null)
-            {
-                var result = await Http.PostAsJsonAsync<Employee>("api/Employees", employee);
-                result.EnsureSuccessStatusCode();
-            }
-            else
-            {
-                var result = await Http.PutAsJsonAsync<Employee>($"api/Employees/{Id.Value}", employee);
-                result.EnsureSuccessStatusCode();
-            }
-            NavigationManager.NavigateTo("/edit-employees");
+            var result = await Http.PostAsJsonAsync<EmployeeDto>("api/Employees", employeeDto);
+            result.EnsureSuccessStatusCode();
         }
-        catch (Exception e)
+        else
         {
-            Console.WriteLine($"Failed to save employee: {e.Message}");
-            // TODO: error handling
-            throw;
+            var result = await Http.PutAsJsonAsync<EmployeeDto>($"api/Employees/{Id.Value}", employeeDto);
+            result.EnsureSuccessStatusCode();
         }
+        NavigationManager.NavigateTo("/edit-employees");
     }
 }

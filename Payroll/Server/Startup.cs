@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Payroll.Server.Data;
-using Payroll.Shared.Models;
+using Payroll.Server.Models;
 using Payroll.Server.Services;
 
 namespace Payroll.Server

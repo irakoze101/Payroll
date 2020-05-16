@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Payroll.Shared.Models
+namespace Payroll.Server.Models
 {
     public enum Relationship
     {

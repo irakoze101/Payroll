@@ -5,11 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Payroll.Server.Data;
-using Payroll.Shared.Models;
+using Payroll.Server.Models;
 using Payroll.Server.Services;
-using Payroll.Shared.ApiModels;
+using Payroll.Shared.DTO;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace Payroll.Server.Controllers
 {
@@ -28,7 +27,7 @@ namespace Payroll.Server.Controllers
         }
 
         [HttpGet("Summary")]
-        public async Task<ActionResult<PayrollSummary>> Summary(CancellationToken cancelToken)
+        public async Task<ActionResult<PayrollSummaryDto>> Summary(CancellationToken cancelToken)
         {
             var userId = GetUserId();
             if (string.IsNullOrWhiteSpace(userId)) return new UnauthorizedResult();
@@ -44,13 +43,13 @@ namespace Payroll.Server.Controllers
                                                     .ToListAsync(cancelToken);
 
 
-            var summary = new PayrollSummary();
+            var summary = new PayrollSummaryDto();
 
             foreach (var employee in employees)
             {
                 var benefitsCostPerPay = _benefitsService.AnnualBenefitCost(employee) / employer.PayPeriodsPerYear;
                 var netPaycheck = employee.AnnualSalary / employer.PayPeriodsPerYear - benefitsCostPerPay;
-                summary.Employees.Add(new EmployeePayrollSummary
+                summary.Employees.Add(new EmployeeSummaryDto
                 {
                     BenefitsCostPerPay = benefitsCostPerPay,
                     GrossAnnualSalary = employee.AnnualSalary,

@@ -1,6 +1,6 @@
 ﻿@page "/edit-employees"
 @using Microsoft.AspNetCore.Authorization
-@using Payroll.Shared.Models
+@using Payroll.Shared.DTO
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -37,19 +37,19 @@ else
 }
 
 @code {
-    private List<Employee>? Employees { get; set; }
+    private List<EmployeeDto>? Employees { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Employees = await Http.GetFromJsonAsync<List<Employee>>("api/Employees");
+        Employees = await Http.GetFromJsonAsync<List<EmployeeDto>>("api/Employees");
     }
 
-    private void EditEmployee(Employee employee)
+    private void EditEmployee(EmployeeDto employee)
     {
         NavigationManager.NavigateTo($"/edit-employee/{employee.Id}");
     }
 
-    private async Task DeleteEmployee(Employee employee)
+    private async Task DeleteEmployee(EmployeeDto employee)
     {
         try
         {

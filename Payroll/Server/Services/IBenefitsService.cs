@@ -1,4 +1,4 @@
-﻿using Payroll.Shared.Models;
+﻿using Payroll.Server.Models;
 
 namespace Payroll.Server.Services
 {

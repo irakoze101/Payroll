@@ -1,4 +1,4 @@
-﻿@using Payroll.Shared.EditModels
+﻿@using Payroll.Shared.DTO
 @inject NavigationManager NavigationManager
 
 <!-- TODO: EditForm doesn't seem to be validating based on the annotations as expected -->
@@ -22,15 +22,15 @@
     }
     <br />
 
-    @if (Employee.Dependents.Any())
+    @if (Employee.Children.Any())
     {
         <p>Dependents</p>
     }
-    @for (int i = 0; i < Employee.Dependents.Count; i++)
+    @for (int i = 0; i < Employee.Children.Count; i++)
     {
         <!-- closures!! -->
         var j = i;
-        <InputText @key="@Employee.Dependents[j]" @bind-Value="Employee.Dependents[j].Name" /> <button type="button" @onclick="@(() => RemoveDependent(j))">🚫</button>
+        <InputText @key="@Employee.Children[j]" @bind-Value="Employee.Children[j].Name" /> <button type="button" @onclick="@(() => RemoveDependent(j))">🚫</button>
         <br />
     }
     <button type="button" @onclick="@AddDependent">Add Dependent</button>
@@ -41,17 +41,17 @@
 </EditForm>
 
 @code {
-        [Parameter]
-    public EmployeeEditModel Employee { get; set; } = new EmployeeEditModel();
-        [Parameter]
-        public EventCallback OnCancel { get; set; }
-        [Parameter]
-        public EventCallback<EmployeeEditModel> OnSave { get; set; }
+    [Parameter]
+    public EmployeeDto Employee { get; set; } = null!;
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+    [Parameter]
+    public EventCallback<EmployeeDto> OnSave { get; set; }
 
     private void AddSpouse()
     {
         if (Employee.Spouse != null) return;
-        Employee.Spouse = new PersonEditModel();
+        Employee.Spouse = new DependentDto();
     }
 
     private void RemoveSpouse()
@@ -61,29 +61,18 @@
 
     private void AddDependent()
     {
-        Employee.Dependents.Add(new PersonEditModel());
+        Employee.Children.Add(new DependentDto());
     }
 
     private void RemoveDependent(int index)
     {
-        if (index >= Employee.Dependents.Count || index < 0) return;
-        Employee.Dependents.RemoveAt(index);
+        if (index >= Employee.Children.Count || index < 0) return;
+        Employee.Children.RemoveAt(index);
     }
 
     private Task Save()
     {
         return OnSave.InvokeAsync(Employee) ?? Task.CompletedTask;
-        /*
-        if (Employee != null)
-        {
-            DataService.SaveEmployee(Employee);
-            NavigationManager.NavigateTo("edit-employees");
-        }
-        else
-        {
-            // ErrorTodo
-        }
-        */
     }
 
     private Task Cancel()

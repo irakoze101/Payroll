@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Payroll.Shared.Models
+namespace Payroll.Server.Models
 {
     public abstract class Person
     {

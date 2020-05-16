@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace Payroll.Shared.Models
+namespace Payroll.Server.Models
 {
     public class ApplicationUser : IdentityUser
     {

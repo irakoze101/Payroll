@@ -32,8 +32,7 @@ else
         {
             try
             {
-                var employee = await Http.GetFromJsonAsync<EmployeeDto>($"api/Employees/{Id.Value}");
-                EditModel = new EmployeeDto();
+                EditModel = await Http.GetFromJsonAsync<EmployeeDto>($"api/Employees/{Id.Value}");
             }
             catch (Exception e)
             {

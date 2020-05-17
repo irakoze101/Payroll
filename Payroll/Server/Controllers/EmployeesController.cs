@@ -117,7 +117,7 @@ namespace Payroll.Server.Controllers
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync(cancelToken);
 
-            return CreatedAtAction("GetEmployee", new { id = employeeDto.Id }, employeeDto);
+            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee.ToDto());
         }
 
         // DELETE: api/Employees/5

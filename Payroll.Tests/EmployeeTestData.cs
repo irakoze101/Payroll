@@ -108,11 +108,32 @@ namespace Payroll.Tests
             return (Model(seed), Dto(seed));
         }
 
+        private static IEnumerable<IEnumerable<bool>> AllChildrens(int maxChildren)
+        {
+            if (maxChildren < 0) throw new ArgumentException(nameof(maxChildren));
+            if (maxChildren == 0)
+            {
+                yield return Enumerable.Empty<bool>();
+                yield break;
+            }
+            foreach (var subsequence in AllChildrens(maxChildren - 1))
+            {
+                yield return subsequence.Concat(true.Yield());
+                yield return subsequence.Concat(false.Yield());
+            }
+        }
+
+        /// <summary>
+        /// Generates <see cref="EmployeeSeedParams"/> for all valid combinations
+        /// of employee having ID, spouse existing, having ID, children existing
+        /// and having IDs up to 3 children inclusive
+        /// </summary>
+        /// <returns></returns>
         public static IEnumerable<EmployeeSeedParams> GenerateSeeds()
         {
-            // An employee without an ID can't have dependents with IDs
             var bools = new bool[2] { false, true };
             const int maxChildren = 3;
+            // Employee without ID (thus no dependent IDs either
             foreach (var hasSpouse in bools)
             {
                 foreach (var nChildren in Enumerable.Range(0, maxChildren + 1))
@@ -126,7 +147,22 @@ namespace Payroll.Tests
                     };
                 }
             }
-            // TODO: employee with IDs
+            foreach (var hasSpouse in bools)
+            {
+                foreach (var spouseHasId in bools)
+                {
+                    foreach (var children in AllChildrens(maxChildren))
+                    {
+                        yield return new EmployeeSeedParams
+                        {
+                            HasId = true,
+                            HasSpouse = hasSpouse,
+                            SpouseHasId = spouseHasId,
+                            ChildrenWithIds = children,
+                        };
+                    }
+                }
+            }
         }
     }
 }

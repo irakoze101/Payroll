@@ -37,6 +37,7 @@ namespace Payroll.Data.Demo
                              new Person("Honey"),
                              new Person("Zephram"),
                              new Person("Eek"),
+                             new Person("Mika"),
                          })
             {
                 Id = 3,

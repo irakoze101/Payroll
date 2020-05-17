@@ -1,20 +1,20 @@
 ﻿@using Payroll.Shared.DTO
 @inject NavigationManager NavigationManager
 
-<!-- TODO: EditForm doesn't seem to be validating based on the annotations as expected -->
-<EditForm Model="@Employee" OnValidSubmit="Save">
-    <!-- TODO: manual validation, enable/disable button -->
+<EditForm Model="@Employee" OnSubmit="Save">
     <DataAnnotationsValidator />
-    <ValidationSummary />
 
     Name: <InputText id="name" @bind-Value="Employee.Name" />
+    <ValidationMessage For="@(() => Employee.Name)" />
     <br />
     Salary: <InputNumber id="salary" @bind-Value="Employee.AnnualSalary" />
+    <ValidationMessage For="@(() => Employee.AnnualSalary)" />
     <br />
 
     @if (Employee.Spouse != null)
     {
         <text>Spouse: </text><InputText id="spouse" @bind-Value="Employee.Spouse.Name" /> <button type="button" @onclick="@RemoveSpouse">🚫</button>
+        <ValidationMessage For="@(() => Employee.Spouse.Name)" />
     }
     else
     {
@@ -31,6 +31,7 @@
         <!-- closures!! -->
         var j = i;
         <InputText @key="@Employee.Children[j]" @bind-Value="Employee.Children[j].Name" /> <button type="button" @onclick="@(() => RemoveDependent(j))">🚫</button>
+        <ValidationMessage For="@(() => Employee.Children[j].Name)" />
         <br />
     }
     <button type="button" @onclick="@AddDependent">Add Dependent</button>
@@ -70,9 +71,13 @@
         Employee.Children.RemoveAt(index);
     }
 
-    private Task Save()
+    private Task Save(EditContext context)
     {
-        return OnSave.InvokeAsync(Employee) ?? Task.CompletedTask;
+        if (context.ValidateObjectTree())
+        {
+            return OnSave.InvokeAsync(Employee) ?? Task.CompletedTask;
+        }
+        return Task.CompletedTask;
     }
 
     private Task Cancel()

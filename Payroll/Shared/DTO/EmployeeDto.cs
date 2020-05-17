@@ -7,8 +7,8 @@ namespace Payroll.Shared.DTO
     {
         public int? Id { get; set; }
 
-        [Required]
-        [RegularExpression(@"[^\s]+", ErrorMessage = Constants.ErrorMessages.NameError)]
+        [Required(ErrorMessage = "Name is required.")]
+        [RegularExpression(@"[^\s]+", ErrorMessage = Constants.ErrorMessages.NonWhitespaceNameRequired)]
         public string Name { get; set; } = string.Empty;
     }
 
@@ -16,8 +16,8 @@ namespace Payroll.Shared.DTO
     {
         public int? Id { get; set; }
 
-        [Required]
-        [RegularExpression(@"[^\s]+", ErrorMessage = Constants.ErrorMessages.NameError)]
+        [Required(ErrorMessage = "Name is required.")]
+        [RegularExpression(@"[^\s]+", ErrorMessage = Constants.ErrorMessages.NonWhitespaceNameRequired)]
         public string Name { get; set; } = string.Empty;
 
         [Range(1, Constants.Validation.MaxSalary)]

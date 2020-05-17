@@ -10,7 +10,7 @@
 
         public static class ErrorMessages
         {
-            public const string NameError = "A non-whitespace name is required.";
+            public const string NonWhitespaceNameRequired = "A non-whitespace name is required.";
         }
     }
 }

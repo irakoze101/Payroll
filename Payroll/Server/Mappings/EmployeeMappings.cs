@@ -107,7 +107,7 @@ namespace Payroll.Server.Mappings
             var invalidChild = updateChildDtos.Keys.FirstOrDefault(key => !updateChildren.Any(c => c.Id == key));
             if (invalidChild != default)
             {
-                throw new MappingException($"No child with key {invalidChild} for employee");
+                throw new MappingException($"No child with key {invalidChild} for employee.");
             }
 
             foreach (var toChild in updateChildren)

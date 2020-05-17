@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -83,7 +84,7 @@ namespace Payroll.Server.Controllers
             }
             catch (MappingException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new StringContent(e.Message));
             }
 
             try

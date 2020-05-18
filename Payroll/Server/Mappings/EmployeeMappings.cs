@@ -74,7 +74,7 @@ namespace Payroll.Server.Mappings
         /// Maps the DTO onto the Employee model. Requires a model with <see cref="Employee.Dependents"/> loaded.
         /// Throws a <see cref="MappingException"/> on a mismatch between DTO and model.
         /// </summary>
-        public static void MapForUpdate(EmployeeDto from, Employee to)
+        public static void UpdateFrom(this Employee to, EmployeeDto from)
         {
             if (to.Dependents == null)
             {
@@ -87,24 +87,36 @@ namespace Payroll.Server.Mappings
 
             to.Name = from.Name;
             to.AnnualSalary = from.AnnualSalary;
-            var newSpouse = to.Dependents.FirstOrDefault(d => d.Relationship == Relationship.Spouse);
-            if (newSpouse == null && from.Spouse != null)
+
+            var toSpouse = to.Dependents.FirstOrDefault(d => d.Relationship == Relationship.Spouse);
+            if (toSpouse != null)
             {
+                switch (from.Spouse?.Id)
+                {
+                    case 0:
+                        to.Dependents.Add(new Dependent { Name = from.Spouse.Name, Relationship = Relationship.Spouse });
+                        // This is the first goto I've ever written in C#, but what I really wanted was a fallthrough
+                        goto case null;
+                    case null:
+                        to.Dependents.Remove(toSpouse);
+                        break;
+                    case var existingId when existingId == toSpouse.Id:
+                        toSpouse.Name = from.Spouse.Name;
+                        break;
+                    default:
+                        throw new MappingException("Spouse IDs do not match.");
+                }
+            }
+            else if (from.Spouse != null)
+            {
+                if (from.Spouse.Id != 0)
+                {
+                    // Can only update existing spouse or create new one
+                    throw new MappingException($"Spouse with ID {from.Spouse.Id} does not exist.");
+                }
                 to.Dependents.Add(new Dependent { Name = from.Spouse.Name, Relationship = Relationship.Spouse });
             }
-            else if (newSpouse != null && from.Spouse == null)
-            {
-                to.Dependents.Remove(newSpouse);
-            }
-            else if (newSpouse != null && from.Spouse != null)
-            {
-                if (from.Spouse.Id.HasValue &&
-                    newSpouse.Id != from.Spouse.Id)
-                {
-                    throw new MappingException("Spouse IDs do not match.");
-                }
-                newSpouse.Name = from.Spouse.Name;
-            }
+            // else from and to spouses both null, nothing to do
 
             // Update the name for any child DTO with an ID, create a dependent
             // for any child without an ID, and delete any child from the Employee

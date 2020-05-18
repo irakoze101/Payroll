@@ -57,7 +57,7 @@ namespace Payroll.Server.Repos
                 throw new EntityNotFoundException(nameof(Employee), id);
             }
 
-            EmployeeMappings.MapForUpdate(dto, employee);
+            employee.UpdateFrom(dto);
 
             await _context.SaveChangesAsync(cancelToken);
         }

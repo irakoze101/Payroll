@@ -4,12 +4,10 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Payroll.Server.Data;
 using Payroll.Server.Mappings;
 using Payroll.Server.Models;
+using Payroll.Server.Repos;
 using Payroll.Shared.DTO;
 
 namespace Payroll.Server.Controllers
@@ -19,10 +17,13 @@ namespace Payroll.Server.Controllers
     [Authorize]
     public class EmployeesController : PayrollControllerBase
     {
-        public EmployeesController(ApplicationDbContext context,
-                                   UserManager<ApplicationUser> userManager) : base(context, userManager)
+        private readonly IEmployeeRepository _employeeRepo;
+
+        public EmployeesController(IEmployeeRepository employeeRepo) : base()
         {
+            _employeeRepo = employeeRepo;
         }
+
 
         // GET: api/Employees
         [HttpGet]
@@ -31,9 +32,7 @@ namespace Payroll.Server.Controllers
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            var employees =  await _context.Employees.Where(e => e.EmployerId == userId)
-                                                     .Include(e => e.Dependents)
-                                                     .ToListAsync(cancelToken);
+            var employees = await _employeeRepo.GetAll(userId, cancelToken);
             return Ok(employees.Select(e => e.ToDto()));
         }
 
@@ -44,10 +43,7 @@ namespace Payroll.Server.Controllers
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            var employee = await _context.Employees.Include(e => e.Dependents)
-                                                   .FirstOrDefaultAsync(e => e.Employer!.Id == userId &&
-                                                                             e.Id == id,
-                                                                        cancelToken);
+            var employee = await _employeeRepo.Get(id, userId, cancelToken);
 
             if (employee == null)
             {
@@ -69,38 +65,17 @@ namespace Payroll.Server.Controllers
                 return BadRequest();
             }
 
-            var employee = await _context.Employees.Include(e => e.Dependents)
-                                                   .FirstOrDefaultAsync(e => e.EmployerId == userId && e.Id == id,
-                                                                        cancelToken);
-
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
             try
             {
-                EmployeeMappings.MapForUpdate(dto, employee);
+                await _employeeRepo.Update(id, dto, userId, cancelToken);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
             }
             catch (MappingException e)
             {
                 return BadRequest(new StringContent(e.Message));
-            }
-
-            try
-            {
-                await _context.SaveChangesAsync(cancelToken);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!(await EmployeeExistsAsync(id, cancelToken)))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
             }
 
             return NoContent();
@@ -113,37 +88,28 @@ namespace Payroll.Server.Controllers
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            var employee = employeeDto.ToEmployee(userId);
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync(cancelToken);
+            employeeDto.Id = await _employeeRepo.Create(employeeDto, userId, cancelToken);
 
-            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee.ToDto());
+            return CreatedAtAction(nameof(GetEmployee), new { id = employeeDto.Id }, employeeDto);
         }
 
         // DELETE: api/Employees/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Employee>> DeleteEmployee(int id, CancellationToken cancelToken)
+        public async Task<ActionResult> DeleteEmployee(int id, CancellationToken cancelToken)
         {
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Employer!.Id == userId &&
-                                                                             e.Id == id,
-                                                                        cancelToken);
-            if (employee == null)
+            try
+            {
+                await _employeeRepo.Delete(id, userId, cancelToken);
+            }
+            catch (EntityNotFoundException)
             {
                 return NotFound();
             }
 
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync(cancelToken);
-
-            return employee;
-        }
-
-        private Task<bool> EmployeeExistsAsync(int id, CancellationToken cancelToken = default)
-        {
-            return _context.Employees.AnyAsync(e => e.Id == id, cancelToken);
+            return NoContent();
         }
     }
 }

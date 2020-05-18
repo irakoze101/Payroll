@@ -80,6 +80,10 @@ namespace Payroll.Server.Mappings
             {
                 throw new InvalidOperationException("Dependents must be loaded.");
             }
+            if (to.Id != from.Id)
+            {
+                throw new MappingException($"IDs do not match (from: {from.Id}, to: {to.Id})");
+            }
 
             to.Name = from.Name;
             to.AnnualSalary = from.AnnualSalary;

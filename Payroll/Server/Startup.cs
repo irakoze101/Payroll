@@ -50,6 +50,8 @@ namespace Payroll.Server
             services.AddRazorPages();
 
             services.AddSingleton<IBenefitsService, BenefitsService>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IEmployerRepository, EmployerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

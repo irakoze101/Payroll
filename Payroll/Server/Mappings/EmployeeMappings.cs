@@ -19,11 +19,21 @@ namespace Payroll.Server.Mappings
         /// <returns></returns>
         public static Employee ToEmployee(this EmployeeDto dto, string employerId)
         {
-            var dependents = dto.Children.Select(d => new Dependent { Name = d.Name, Relationship = Relationship.Child })
+            var dependents = dto.Children.Select(d => new Dependent
+            {
+                Id = d.Id ?? 0,
+                Name = d.Name,
+                Relationship = Relationship.Child,
+            })
                                            .ToList();
             if (dto.Spouse != null)
             {
-                dependents.Add(new Dependent { Name = dto.Spouse.Name, Relationship = Relationship.Spouse });
+                dependents.Add(new Dependent
+                {
+                    Id = dto.Spouse.Id ?? 0,
+                    Name = dto.Spouse.Name,
+                    Relationship = Relationship.Spouse,
+                });
             }
             return new Employee
             {
@@ -45,10 +55,18 @@ namespace Payroll.Server.Mappings
             return new EmployeeDto
             {
                 AnnualSalary = employee.AnnualSalary,
-                Children = children.Select(d => new DependentDto { Id = d.Id, Name = d.Name }).ToList(),
-                Id = employee.Id,
+                Children = children.Select(d => new DependentDto
+                {
+                    Id = d.Id != 0 ? d.Id : (int?) null,
+                    Name = d.Name
+                }).ToList(),
+                Id = employee.Id != 0 ? employee.Id : (int?) null,
                 Name = employee.Name,
-                Spouse = spouse == null ? null : new DependentDto { Id = spouse.Id, Name = spouse.Name },
+                Spouse = spouse == null ? null : new DependentDto
+                {
+                    Id = spouse.Id != 0 ? spouse.Id : (int?) null,
+                    Name = spouse.Name
+                },
             };
         }
 

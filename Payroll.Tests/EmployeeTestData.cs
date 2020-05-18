@@ -4,10 +4,11 @@ using Payroll.Shared.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace Payroll.Tests
 {
-    public static class EmployeeTestData
+    public class EmployeeTestData : TheoryData<Employee, EmployeeDto>
     {
         // Using the same seed every time allows for consistent test data... until the test cases
         // are changed. Should find a way to use a unique Random instance for each initialization.
@@ -29,6 +30,7 @@ namespace Payroll.Tests
             public int? SpouseId;
             public string? SpouseName;
             public IEnumerable<(int?, string)> Children;
+            public string EmployerId;
 
             public EmployeeSeed(EmployeeSeedParams seedParams)
             {
@@ -38,33 +40,35 @@ namespace Payroll.Tests
                 SpouseId = (seedParams.HasSpouse && seedParams.SpouseHasId) ? RandomId() : (int?)null;
                 SpouseName = seedParams.HasSpouse ? RandomName() : null;
                 Children = seedParams.ChildrenWithIds.Select(c => (c ? RandomId() : (int?)null, RandomName())).ToList();
+                EmployerId = RandomString(20);
             }
         }
 
         private static int RandomId() => _random.Next(1, int.MaxValue);
 
-        private static string RandomName()
+        private static string RandomString(int length)
         {
             const string alphabet = "abcdefghijklmnopqrstuvwxyz";
-            var name = new char[11];
-            for (int i = 0; i < 5; i++)
+            var newString = new char[length];
+            for (int i = 0; i < length; i++)
             {
-                name[i] = alphabet[_random.Next(26)];
+                newString[i] = alphabet[_random.Next(26)];
             }
-            name[5] = ' ';
-            for (int i = 6; i < 11; i++)
-            {
-                name[i] = alphabet[_random.Next(26)];
-            }
-            return new string(name);
+            return new string(newString);
+        }
+
+        private static string RandomName()
+        {
+            return $"{RandomString(5)} {RandomString(5)}";
         }
 
         private static decimal RandomSalary() => (decimal)(_random.NextDouble() * Constants.Validation.MaxSalary);
 
         public static (Employee, EmployeeDto) GenerateEmployee(EmployeeSeedParams seedParams)
         {
-            var model = Model(new EmployeeSeed(seedParams));
-            var dto = Dto(new EmployeeSeed(seedParams));
+            var seed = new EmployeeSeed(seedParams);
+            var model = Model(seed);
+            var dto = Dto(seed);
             return (model, dto);
         }
 
@@ -76,6 +80,7 @@ namespace Payroll.Tests
                 Name = seed.Name,
                 AnnualSalary = seed.Salary,
                 Dependents = new List<Dependent>(),
+                EmployerId = seed.EmployerId,
             };
             if (seed.SpouseName != null)
             {
@@ -129,7 +134,7 @@ namespace Payroll.Tests
         /// and having IDs up to 3 children inclusive
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<EmployeeSeedParams> GenerateSeeds()
+        public static IEnumerable<EmployeeSeedParams> GenerateSeedParams()
         {
             var bools = new bool[2] { false, true };
             const int maxChildren = 3;
@@ -162,6 +167,20 @@ namespace Payroll.Tests
                         };
                     }
                 }
+            }
+        }
+
+        private static Lazy<List<(Employee Model, EmployeeDto Dto)>> _allEmployees = new Lazy<List<(Employee, EmployeeDto)>>(() =>
+        {
+            return GenerateSeedParams().Select(p => GenerateEmployee(p)).ToList();
+        });
+
+        public EmployeeTestData()
+        {
+            foreach (var employee in _allEmployees.Value)
+            {
+                // TODO: Pretty sure I remember there being a smoother way to do this
+                Add(employee.Model, employee.Dto);
             }
         }
     }

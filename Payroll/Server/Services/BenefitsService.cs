@@ -9,7 +9,7 @@ namespace Payroll.Server.Services
         private static class Cost
         {
             public const decimal Employee = 1_000m;
-            public const decimal Dependent = 5000m;
+            public const decimal Dependent = 500m;
         }
 
         /// <summary>

@@ -10,7 +10,6 @@ using Xunit;
 
 namespace Payroll.Tests
 {
-    // TODO: now that I know FluentAssertions exists, I can probably just get rid of this class.
     public static class PayrollAssert
     {
         public static void Equal(Dependent model, DependentDto dto)

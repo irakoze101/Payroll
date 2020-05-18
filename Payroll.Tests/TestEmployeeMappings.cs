@@ -2,13 +2,11 @@
 using Payroll.Server.Mappings;
 using Payroll.Server.Models;
 using Payroll.Shared.DTO;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace Payroll.Tests
 {
+    // TODO: a test to verify that the shape of Employee/EmployeeDto hasn't changed since the unit tests were written
     public class TestEmployeeMappings
     {
         [Theory]

@@ -8,68 +8,65 @@ using Xunit;
 
 namespace Payroll.Tests
 {
+    public struct EmployeeSeedParams
+    {
+        public bool HasId;
+        public bool HasSpouse;
+        public bool SpouseHasId;
+        public IEnumerable<bool> ChildrenWithIds;
+    }
+
+    public struct EmployeeSeed
+    {
+        public int Id;
+        public string Name;
+        public decimal Salary;
+        public int SpouseId;
+        public string? SpouseName;
+        public IEnumerable<(int, string)> Children;
+        public string EmployerId;
+
+        public EmployeeSeed(int id = 0,
+                            string name = "Placeholder",
+                            decimal salary = 52_000,
+                            int spouseId = 0,
+                            string? spouseName = null,
+                            IEnumerable<(int, string)>? children = null,
+                            string employerId = "Employer")
+        {
+            Id = id;
+            Name = name;
+            Salary = salary;
+            SpouseId = spouseId;
+            SpouseName = spouseName;
+            Children = children ?? Enumerable.Empty<(int, string)>();
+            EmployerId = employerId;
+        }
+
+
+        public EmployeeSeed(EmployeeSeedParams seedParams)
+        {
+            Id = seedParams.HasId ? Utils.RandomId() : 0;
+            Name = Utils.RandomName();
+            Salary = Utils.RandomSalary();
+            SpouseId = (seedParams.HasSpouse && seedParams.SpouseHasId) ? Utils.RandomId() : 0;
+            SpouseName = seedParams.HasSpouse ? Utils.RandomName() : null;
+            Children = seedParams.ChildrenWithIds.Select(c => (c ? Utils.RandomId() : 0, Utils.RandomName())).ToList();
+            EmployerId = Utils.RandomString(20);
+        }
+    }
+
     public class EmployeeTestData : TheoryData<Employee, EmployeeDto>
     {
-        // Using the same seed every time allows for consistent test data... until the test cases
-        // are changed. Should find a way to use a unique Random instance for each initialization.
-        private static Random _random = new Random(42);
-
-        public struct EmployeeSeedParams
-        {
-            public bool HasId;
-            public bool HasSpouse;
-            public bool SpouseHasId;
-            public IEnumerable<bool> ChildrenWithIds;
-        }
-
-        public struct EmployeeSeed
-        {
-            public int Id;
-            public string Name;
-            public decimal Salary;
-            public int SpouseId;
-            public string? SpouseName;
-            public IEnumerable<(int, string)> Children;
-            public string EmployerId;
-
-            public EmployeeSeed(EmployeeSeedParams seedParams)
-            {
-                Id = seedParams.HasId ? RandomId() : 0;
-                Name = RandomName();
-                Salary = RandomSalary();
-                SpouseId = (seedParams.HasSpouse && seedParams.SpouseHasId) ? RandomId() : 0;
-                SpouseName = seedParams.HasSpouse ? RandomName() : null;
-                Children = seedParams.ChildrenWithIds.Select(c => (c ? RandomId() : 0, RandomName())).ToList();
-                EmployerId = RandomString(20);
-            }
-        }
-
-        private static int RandomId() => _random.Next(1, int.MaxValue);
-
-        private static string RandomString(int length)
-        {
-            const string alphabet = "abcdefghijklmnopqrstuvwxyz";
-            var newString = new char[length];
-            for (int i = 0; i < length; i++)
-            {
-                newString[i] = alphabet[_random.Next(26)];
-            }
-            return new string(newString);
-        }
-
-        private static string RandomName()
-        {
-            return $"{RandomString(5)} {RandomString(5)}";
-        }
-
-        private static decimal RandomSalary() => (decimal)(_random.NextDouble() * Constants.Validation.MaxSalary);
-
         public static (Employee, EmployeeDto) GenerateEmployee(EmployeeSeedParams seedParams)
         {
             var seed = new EmployeeSeed(seedParams);
-            var model = Model(seed);
-            var dto = Dto(seed);
-            return (model, dto);
+            return GenerateEmployee(seed);
+        }
+
+        public static (Employee, EmployeeDto) GenerateEmployee(EmployeeSeed seed)
+        {
+            return (Model(seed), Dto(seed));
         }
 
         public static Employee Model(EmployeeSeed seed)
@@ -108,24 +105,31 @@ namespace Payroll.Tests
             return dto;
         }
 
-        private static (Employee, EmployeeDto) EmployeeData(EmployeeSeed seed)
+        /// <summary>
+        /// Generates all possible sequences of children ID states for a specific number of children
+        /// </summary>
+        /// <param name="nChildren">The number of children</param>
+        /// <returns>All possible orderings of ID states for the given number of children (e.g. for 2 children,
+        /// returns { { false, false }, { false, true }, { true, false }, { true, true } })</returns>
+        private static IEnumerable<IEnumerable<bool>> AllChildrens(int nChildren)
         {
-            return (Model(seed), Dto(seed));
-        }
-
-        private static IEnumerable<IEnumerable<bool>> AllChildrens(int maxChildren)
-        {
-            if (maxChildren < 0) throw new ArgumentException(nameof(maxChildren));
-            if (maxChildren == 0)
+            if (nChildren < 0) throw new ArgumentException(nameof(nChildren));
+            if (nChildren == 0)
             {
                 yield return Enumerable.Empty<bool>();
                 yield break;
             }
-            foreach (var subsequence in AllChildrens(maxChildren - 1))
+            foreach (var subsequence in AllChildrens(nChildren - 1))
             {
                 yield return subsequence.Concat(true.Yield());
                 yield return subsequence.Concat(false.Yield());
             }
+        }
+
+        private static IEnumerable<IEnumerable<bool>> AllChildrensForRange(int maxChildren)
+        {
+            return Enumerable.Range(0, maxChildren + 1)
+                             .SelectMany(i => AllChildrens(i));
         }
 
         /// <summary>
@@ -156,7 +160,7 @@ namespace Payroll.Tests
             {
                 foreach (var spouseHasId in bools)
                 {
-                    foreach (var children in AllChildrens(maxChildren))
+                    foreach (var children in AllChildrensForRange(maxChildren))
                     {
                         yield return new EmployeeSeedParams
                         {

@@ -24,22 +24,22 @@ namespace Payroll.Tests
 
         public struct EmployeeSeed
         {
-            public int? Id;
+            public int Id;
             public string Name;
             public decimal Salary;
-            public int? SpouseId;
+            public int SpouseId;
             public string? SpouseName;
-            public IEnumerable<(int?, string)> Children;
+            public IEnumerable<(int, string)> Children;
             public string EmployerId;
 
             public EmployeeSeed(EmployeeSeedParams seedParams)
             {
-                Id = seedParams.HasId ? RandomId() : (int?)null;
+                Id = seedParams.HasId ? RandomId() : 0;
                 Name = RandomName();
                 Salary = RandomSalary();
-                SpouseId = (seedParams.HasSpouse && seedParams.SpouseHasId) ? RandomId() : (int?)null;
+                SpouseId = (seedParams.HasSpouse && seedParams.SpouseHasId) ? RandomId() : 0;
                 SpouseName = seedParams.HasSpouse ? RandomName() : null;
-                Children = seedParams.ChildrenWithIds.Select(c => (c ? RandomId() : (int?)null, RandomName())).ToList();
+                Children = seedParams.ChildrenWithIds.Select(c => (c ? RandomId() : 0, RandomName())).ToList();
                 EmployerId = RandomString(20);
             }
         }
@@ -76,7 +76,7 @@ namespace Payroll.Tests
         {
             var model = new Employee
             {
-                Id = seed.Id ?? 0,
+                Id = seed.Id,
                 Name = seed.Name,
                 AnnualSalary = seed.Salary,
                 Dependents = new List<Dependent>(),
@@ -84,11 +84,11 @@ namespace Payroll.Tests
             };
             if (seed.SpouseName != null)
             {
-                model.Dependents.Add(new Dependent { Id = seed.SpouseId ?? 0, Name = seed.SpouseName, Relationship = Relationship.Spouse });
+                model.Dependents.Add(new Dependent { Id = seed.SpouseId, Name = seed.SpouseName, Relationship = Relationship.Spouse });
             }
             foreach (var (childId, childName) in seed.Children)
             {
-                model.Dependents.Add(new Dependent { Id = childId ?? 0, Name = childName, Relationship = Relationship.Child });
+                model.Dependents.Add(new Dependent { Id = childId, Name = childName, Relationship = Relationship.Child });
             }
 
             return model;
@@ -103,7 +103,7 @@ namespace Payroll.Tests
                 Name = seed.Name,
                 Spouse = seed.SpouseName == null ? null : new DependentDto { Id = seed.SpouseId, Name = seed.SpouseName },
                 // This has been open for 3 years ☹ https://github.com/dotnet/csharplang/issues/258
-                Children = seed.Children.Select(((int? childId, string childName) c) => new DependentDto { Id = c.childId, Name = c.childName }).ToList(),
+                Children = seed.Children.Select(((int childId, string childName) c) => new DependentDto { Id = c.childId, Name = c.childName }).ToList(),
             };
             return dto;
         }

@@ -14,14 +14,14 @@ namespace Payroll.Tests
     {
         public static void Equal(Dependent model, DependentDto dto)
         {
-            Assert.Equal(model.Id, dto.Id ?? 0);
+            Assert.Equal(model.Id, dto.Id);
             Assert.Equal(model.Name, dto.Name);
         }
 
         public static void Equal(Employee model, EmployeeDto dto)
         {
             Assert.Equal(model.Name, dto.Name);
-            Assert.Equal(model.Id, dto.Id ?? 0);
+            Assert.Equal(model.Id, dto.Id);
             Assert.Equal(model.AnnualSalary, dto.AnnualSalary);
             var (spouses, children) = model.Dependents.Partition(d => d.Relationship == Relationship.Spouse);
             var spouse = spouses.FirstOrDefault();

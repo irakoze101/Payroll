@@ -5,7 +5,10 @@ namespace Payroll.Shared.DTO
 {
     public class DependentDto
     {
-        public int? Id { get; set; }
+        /// <summary>
+        /// ID of dependent. <c>0</c> indicates a new dependent.
+        /// </summary>
+        public int Id { get; set; }
 
         [Required(ErrorMessage = "Name is required.")]
         [RegularExpression(@"[^\s]+", ErrorMessage = Constants.ErrorMessages.NonWhitespaceNameRequired)]
@@ -14,7 +17,10 @@ namespace Payroll.Shared.DTO
 
     public class EmployeeDto
     {
-        public int? Id { get; set; }
+        /// <summary>
+        /// ID of employee. <c>0</c> indicates a new employee.
+        /// </summary>
+        public int Id { get; set; }
 
         [Required(ErrorMessage = "Name is required.")]
         [RegularExpression(@"[^\s]+", ErrorMessage = Constants.ErrorMessages.NonWhitespaceNameRequired)]

@@ -21,7 +21,7 @@ namespace Payroll.Server.Mappings
         {
             var dependents = dto.Children.Select(d => new Dependent
             {
-                Id = d.Id ?? 0,
+                Id = d.Id,
                 Name = d.Name,
                 Relationship = Relationship.Child,
             })
@@ -30,7 +30,7 @@ namespace Payroll.Server.Mappings
             {
                 dependents.Add(new Dependent
                 {
-                    Id = dto.Spouse.Id ?? 0,
+                    Id = dto.Spouse.Id,
                     Name = dto.Spouse.Name,
                     Relationship = Relationship.Spouse,
                 });
@@ -40,7 +40,7 @@ namespace Payroll.Server.Mappings
                 AnnualSalary = dto.AnnualSalary,
                 Dependents = dependents,
                 EmployerId = employerId,
-                Id = dto.Id ?? default,
+                Id = dto.Id,
                 Name = dto.Name,
             };
         }
@@ -57,14 +57,14 @@ namespace Payroll.Server.Mappings
                 AnnualSalary = employee.AnnualSalary,
                 Children = children.Select(d => new DependentDto
                 {
-                    Id = d.Id != 0 ? d.Id : (int?) null,
+                    Id = d.Id,
                     Name = d.Name
                 }).ToList(),
-                Id = employee.Id != 0 ? employee.Id : (int?) null,
+                Id = employee.Id,
                 Name = employee.Name,
                 Spouse = spouse == null ? null : new DependentDto
                 {
-                    Id = spouse.Id != 0 ? spouse.Id : (int?) null,
+                    Id = spouse.Id,
                     Name = spouse.Name
                 },
             };
@@ -113,9 +113,9 @@ namespace Payroll.Server.Mappings
             var updateChildDtos = new Dictionary<int, DependentDto>();
             foreach (var child in from.Children)
             {
-                if (child.Id != null)
+                if (child.Id != 0)
                 {
-                    updateChildDtos[child.Id.Value] = child;
+                    updateChildDtos[child.Id] = child;
                 }
                 else
                 {

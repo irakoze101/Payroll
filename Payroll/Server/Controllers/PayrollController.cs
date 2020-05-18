@@ -40,6 +40,7 @@ namespace Payroll.Server.Controllers
 
             var employees = await _context.Employees.Include(e => e.Dependents)
                                                     .Where(e => e.EmployerId == employer.Id)
+                                                    .OrderBy(e => e.Name)
                                                     .ToListAsync(cancelToken);
 
 

@@ -10,6 +10,7 @@ using Payroll.Server.Models;
 using Payroll.Server.Services;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Payroll.Server.Repos;
 
 namespace Payroll.Server
 {

@@ -50,3 +50,6 @@ tested the heck out of them.
 while since I've written proper tests, so I played around with different approaches. I'm not sure
 my attempt at generating an "exhaustive" set of employee models & DTOs for the mapping tests was
 worth the effort, but it was fun.
+* I spent so much time on the API unit tests that I didn't get around to exploring UI unit tests. Some
+libraries do exist for unit testing Blazor components; being able to share test cases between server and
+client would have helped justify both the time spent on the test cases and the choice of Blazor.

@@ -39,8 +39,8 @@ benefit. And if, hypothetically, a requirement was later added for customizing p
 not match my implementation - what if pay periods need to be customized per-employee, not per-employer?
 _Don't write it until you need it._
 * I pulled the database access from the controllers into repo classes to simplify unit testing the
-controllers, but hit another roadblock in mocking out the current UserId. Between the repos and the
-BenefitsService, there's very little logic left in the controllers anyway.
+controllers, but hit another roadblock in mocking out the current UserId, so they ended up not providing
+much benefit.
 * Originally I intended to pass database models to and from the client instead of DTOs, in the interest
 of avoiding mapping bugs. Everything worked except for the dependents on the Update endpoint. 
 While looking for a solution, I stumbled on a [convincing argument](https://stackoverflow.com/questions/55110021/ef-core-removing-a-related-entity-from-collection-navigation-property-does-not)

@@ -8,9 +8,9 @@ API, and unit tests.
 
 ## Building
 The current solution will only build & run on Visual Studio 2019 Preview on Windows (with the "ASP.NET 
-and web development" loadout, which can be installed side-by-side with the standard VS2019. The solution
-builds and launches cross-platform with the latest .NET Core SDK, but the configured database only works on
-Windows, so it doesn't get far.
+and web development" loadout), which can be installed side-by-side with the standard VS2019 using the
+Visual Studio Installer. The solution builds and launches cross-platform with the latest .NET Core SDK, 
+but the configured database only works on Windows, so it doesn't get far.
 
 When you're done playing with it, go to your AppData\Local\Temp folder and delete any folders there named vscode-js-debug-xxxxxx.
 I ended up with about 20 gigs' worth of those.

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Payroll.Server.Services
+namespace Payroll.Server.Benefits
 {
     // UnitTestTodo
     public class BenefitsService : IBenefitsService
@@ -22,15 +22,10 @@ namespace Payroll.Server.Services
         /// </summary>
         /// <param name="employee"></param>
         /// <returns></returns>
-        public decimal AnnualBenefitCost(Employee employee)
+        public decimal AnnualBenefitCost(IEmployee employee)
         {
-            if (employee.Dependents == null)
-            {
-                throw new InvalidOperationException("Dependents must be loaded to calculate benefits.");
-            }
-
             // Name starting with 'A' gets a 10% discount
-            Func<Person, decimal, decimal> costForPerson = (person, cost) =>
+            Func<IPerson, decimal, decimal> costForPerson = (person, cost) =>
             {
                 if (string.IsNullOrWhiteSpace(person.Name)) return cost;
 
@@ -51,7 +46,7 @@ namespace Payroll.Server.Services
             return totalCost;
 
         }
-        public PayrollSummaryDto PayrollSummary(int payPeriodsPerYear, IEnumerable<Employee> employees)
+        public PayrollSummaryDto PayrollSummary(int payPeriodsPerYear, IEnumerable<IEmployee> employees)
         {
             var summary = new PayrollSummaryDto();
 

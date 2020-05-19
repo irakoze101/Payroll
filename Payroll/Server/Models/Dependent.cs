@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using Payroll.Server.Benefits;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Payroll.Server.Models
 {
@@ -8,8 +10,13 @@ namespace Payroll.Server.Models
         Child,
     };
 
-    public class Dependent : Person
+    public class Dependent : IPerson
     {
+        public int Id { get; set; }
+
+        [Required]
+        public string Name { get; set; } = null!;
+
         public Relationship Relationship { get; set; }
 
         public int EmployeeId { get; set; }

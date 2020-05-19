@@ -2,11 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Payroll.Server.Services;
 using Payroll.Shared.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Payroll.Server.Repos;
+using Payroll.Server.Benefits;
 
 namespace Payroll.Server.Controllers
 {
@@ -36,7 +35,7 @@ namespace Payroll.Server.Controllers
 
             var payPeriodsPerYear = await _employerRepo.GetPayPeriodsPerYear(userId, cancelToken);
             var employees = await _employeeRepo.GetAll(userId, true, cancelToken);
-            return Ok(_benefitsService.PayrollSummary(payPeriodsPerYear, employees));
+            return Ok(_benefitsService.PayrollSummary(payPeriodsPerYear, employees.Cast<IEmployee>()));
         }
     }
 }

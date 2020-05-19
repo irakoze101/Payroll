@@ -1,11 +1,18 @@
-﻿using Payroll.Shared;
+﻿using Payroll.Server.Benefits;
+using Payroll.Shared;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Payroll.Server.Models
 {
-    public class Employee : Person
+    public class Employee : IEmployee
     {
+        public int Id { get; set; }
+
+        [Required]
+        public string Name { get; set; } = null!;
+
         [Range(1, Constants.Validation.MaxSalary)]
         public decimal AnnualSalary { get; set; } = 52_000;
 
@@ -13,5 +20,7 @@ namespace Payroll.Server.Models
         public virtual ApplicationUser? Employer { get; set; }
 
         public virtual ICollection<Dependent>? Dependents { get; set; }
+
+        IEnumerable<IPerson> IEmployee.Dependents => Dependents ?? throw new InvalidOperationException("Dependents are not loaded");
     }
 }

@@ -19,12 +19,16 @@ namespace Payroll.Server.Repos
             _context = context;
         }
 
-        public async Task<Employee> Get(int id, string employerId, CancellationToken cancelToken)
+        public async Task<Employee> Get(int id, string employerId, bool includeDependents, CancellationToken cancelToken)
         {
-            var employee = await _context.Employees.Include(e => e.Dependents)
-                                                   .FirstOrDefaultAsync(e => e.Employer!.Id == employerId &&
-                                                                             e.Id == id,
-                                                                        cancelToken);
+            var query = (IQueryable<Employee>)_context.Employees;
+            if (includeDependents)
+            {
+                query = query.Include(e => e.Dependents);
+            }
+            var employee = await query.FirstOrDefaultAsync(e => e.Employer!.Id == employerId &&
+                                                                e.Id == id,
+                                                           cancelToken);
             if (employee == null)
             {
                 throw new EntityNotFoundException(nameof(Employee), id);
@@ -32,11 +36,15 @@ namespace Payroll.Server.Repos
             return employee;
         }
 
-        public Task<List<Employee>> GetAll(string employerId, CancellationToken cancelToken)
+        public Task<List<Employee>> GetAll(string employerId, bool includeDependents, CancellationToken cancelToken)
         {
-            return _context.Employees.Include(e => e.Dependents)
-                                     .Where(e => e.EmployerId == employerId)
-                                     .ToListAsync(cancelToken);
+            var query = (IQueryable<Employee>)_context.Employees;
+            if (includeDependents)
+            {
+                query = query.Include(e => e.Dependents);
+            }
+            return query.Where(e => e.EmployerId == employerId)
+                        .ToListAsync(cancelToken);
         }
 
         public async Task<int> Create(EmployeeDto dto, string employerId, CancellationToken cancelToken)

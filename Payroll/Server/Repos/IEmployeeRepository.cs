@@ -16,8 +16,8 @@ namespace Payroll.Server.Repos
         /// Gets an existing Employee.
         /// </summary>
         /// <remarks>Throws <see cref="EntityNotFoundException"/> if employee with given ID and EmployerId is not found.</remarks>
-        Task<Employee> Get(int id, string employerId, CancellationToken cancelToken);
-        Task<List<Employee>> GetAll(string employerId, CancellationToken cancelToken);
+        Task<Employee> Get(int id, string employerId, bool includeDependents, CancellationToken cancelToken);
+        Task<List<Employee>> GetAll(string employerId, bool includeDependents, CancellationToken cancelToken);
         /// <summary>
         /// Updates an existing Employee.
         /// </summary>

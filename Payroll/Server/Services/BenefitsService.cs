@@ -1,5 +1,8 @@
 ﻿using Payroll.Server.Models;
+using Payroll.Shared.DTO;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Payroll.Server.Services
 {
@@ -47,6 +50,25 @@ namespace Payroll.Server.Services
 
             return totalCost;
 
+        }
+        public PayrollSummaryDto PayrollSummary(int payPeriodsPerYear, IEnumerable<Employee> employees)
+        {
+            var summary = new PayrollSummaryDto();
+
+            foreach (var employee in employees.OrderBy(e => e.Name))
+            {
+                var benefitsCostPerPay = AnnualBenefitCost(employee) / payPeriodsPerYear;
+                var netPaycheck = employee.AnnualSalary / payPeriodsPerYear - benefitsCostPerPay;
+                summary.Employees.Add(new EmployeeSummaryDto
+                {
+                    BenefitsCostPerPay = benefitsCostPerPay,
+                    GrossAnnualSalary = employee.AnnualSalary,
+                    Name = employee.Name,
+                    NetPaycheck = netPaycheck,
+                });
+            }
+
+            return summary;
         }
     }
 }

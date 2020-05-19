@@ -32,7 +32,7 @@ namespace Payroll.Server.Controllers
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            var employees = await _employeeRepo.GetAll(userId, cancelToken);
+            var employees = await _employeeRepo.GetAll(userId, true, cancelToken);
             return Ok(employees.Select(e => e.ToDto()));
         }
 
@@ -43,7 +43,7 @@ namespace Payroll.Server.Controllers
             var userId = GetUserId();
             if (userId == null) return new UnauthorizedResult();
 
-            var employee = await _employeeRepo.Get(id, userId, cancelToken);
+            var employee = await _employeeRepo.Get(id, userId, true, cancelToken);
 
             if (employee == null)
             {

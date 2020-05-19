@@ -35,24 +35,8 @@ namespace Payroll.Server.Controllers
             if (string.IsNullOrWhiteSpace(userId)) return new UnauthorizedResult();
 
             var payPeriodsPerYear = await _employerRepo.GetPayPeriodsPerYear(userId, cancelToken);
-            var employees = await _employeeRepo.GetAll(userId, cancelToken);
-
-            var summary = new PayrollSummaryDto();
-
-            foreach (var employee in employees)
-            {
-                var benefitsCostPerPay = _benefitsService.AnnualBenefitCost(employee) / payPeriodsPerYear;
-                var netPaycheck = employee.AnnualSalary / payPeriodsPerYear - benefitsCostPerPay;
-                summary.Employees.Add(new EmployeeSummaryDto
-                {
-                    BenefitsCostPerPay = benefitsCostPerPay,
-                    GrossAnnualSalary = employee.AnnualSalary,
-                    Name = employee.Name,
-                    NetPaycheck = netPaycheck,
-                });
-            }
-
-            return Ok(summary);
+            var employees = await _employeeRepo.GetAll(userId, true, cancelToken);
+            return Ok(_benefitsService.PayrollSummary(payPeriodsPerYear, employees));
         }
     }
 }
